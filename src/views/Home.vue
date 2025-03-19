@@ -190,6 +190,44 @@
         </div>
       </div>
     </div>
+
+    <div class="feature-cards">
+      <div class="feature-card" @click="$router.push('/pest-detection')">
+        <i class="fas fa-bug"></i>
+        <h3>AI Pest Detection</h3>
+        <p>Detect pests and diseases in real-time using AI-powered camera analysis</p>
+      </div>
+      
+      <div class="feature-card" @click="$router.push('/microclimate-monitoring')">
+        <i class="fas fa-temperature-high"></i>
+        <h3>Microclimate Monitoring</h3>
+        <p>Monitor and control greenhouse conditions for optimal plant growth</p>
+      </div>
+      
+      <div class="feature-card" @click="$router.push('/crop-yield-forecasting')">
+        <i class="fas fa-chart-line"></i>
+        <h3>Yield Forecasting</h3>
+        <p>AI-powered predictions for crop yields and market trends</p>
+      </div>
+      
+      <div class="feature-card" @click="$router.push('/mobile-app-integration')">
+        <i class="fas fa-mobile-alt"></i>
+        <h3>Mobile App</h3>
+        <p>Access your farm data on the go with our dedicated mobile application</p>
+      </div>
+      
+      <div class="feature-card" @click="$router.push('/water-recycling')">
+        <i class="fas fa-recycle"></i>
+        <h3>Water Recycling</h3>
+        <p>Monitor water usage efficiency and recycling systems</p>
+      </div>
+      
+      <div class="feature-card" @click="$router.push('/smart-alerts')">
+        <i class="fas fa-bell"></i>
+        <h3>Smart Alerts</h3>
+        <p>Receive notifications for critical events and system status</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -405,5 +443,42 @@ export default {
 <style scoped>
 .home {
   max-width: 1200px;
+}
+
+.feature-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.feature-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card i {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #4CAF50;
+}
+
+.feature-card h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.feature-card p {
+  color: #666;
 }
 </style> 

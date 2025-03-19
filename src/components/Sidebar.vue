@@ -8,21 +8,49 @@
       <div class="section-title">MAIN</div>
       <nav class="sidebar-nav">
         <router-link to="/" class="sidebar-link" exact>
+          <i class="fas fa-home"></i>
           <span>Home</span>
         </router-link>
         <router-link to="/soil-monitoring" class="sidebar-link">
+          <i class="fas fa-seedling"></i>
           <span>Soil Monitoring</span>
         </router-link>
         <router-link to="/water-monitoring" class="sidebar-link">
+          <i class="fas fa-tint"></i>
           <span>Water Monitoring</span>
         </router-link>
         <router-link to="/irrigation-override" class="sidebar-link">
+          <i class="fas fa-faucet"></i>
           <span>Irrigation Override</span>
         </router-link>
         <router-link to="/weather" class="sidebar-link">
+          <i class="fas fa-cloud-sun"></i>
           <span>Weather Forecast</span>
         </router-link>
-
+        <router-link to="/pest-detection" class="sidebar-link">
+          <i class="fas fa-bug"></i>
+          <span>Pest & Disease Detection</span>
+        </router-link>
+        <router-link to="/microclimate-monitoring" class="sidebar-link">
+          <i class="fas fa-temperature-high"></i>
+          <span>Microclimate Monitoring</span>
+        </router-link>
+        <router-link to="/crop-yield-forecasting" class="sidebar-link">
+          <i class="fas fa-chart-line"></i>
+          <span>Crop Yield Forecasting</span>
+        </router-link>
+        <router-link to="/mobile-app-integration" class="sidebar-link">
+          <i class="fas fa-mobile-alt"></i>
+          <span>Mobile App Integration</span>
+        </router-link>
+        <router-link to="/water-recycling" class="sidebar-link">
+          <i class="fas fa-recycle"></i>
+          <span>Water Recycling</span>
+        </router-link>
+        <router-link to="/smart-alerts" class="sidebar-link">
+          <i class="fas fa-bell"></i>
+          <span>Smart Alerts</span>
+        </router-link>
       </nav>
     </div>
     
@@ -30,9 +58,11 @@
       <div class="section-title">MANAGEMENT</div>
       <nav class="sidebar-nav">
         <router-link to="/team" class="sidebar-link">
+          <i class="fas fa-users"></i>
           <span>Team</span>
         </router-link>
         <router-link to="/settings" class="sidebar-link">
+          <i class="fas fa-cog"></i>
           <span>Settings</span>
         </router-link>
       </nav>
@@ -96,6 +126,12 @@ export default {
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.95rem;
+}
+
+.sidebar-link i {
+  margin-right: 0.75rem;
+  width: 1.25rem;
+  text-align: center;
 }
 
 .sidebar-link:hover {
