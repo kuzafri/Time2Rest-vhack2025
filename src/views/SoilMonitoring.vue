@@ -1,21 +1,4 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Header (reused from Home.vue) -->
-    <div class="w-full bg-white px-8 py-4 shadow-sm flex items-center justify-between">
-      <h1 class="text-2xl font-medium text-gray-800">LeaveLet</h1>
-      <div class="flex items-center space-x-4">
-        <button class="p-2 rounded-full hover:bg-gray-100">
-          <i class="fas fa-search text-gray-500"></i>
-        </button>
-        <button class="p-2 rounded-full hover:bg-gray-100 relative">
-          <i class="fas fa-bell text-gray-500"></i>
-          <span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-        </button>
-        <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-          <span>JD</span>
-        </div>
-      </div>
-    </div>
 
     <!-- Main Content -->
     <div class="flex">
@@ -192,7 +175,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>

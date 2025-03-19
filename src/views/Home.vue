@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <div class="home">
     <div class="mb-8">
       <h2 class="text-xl font-medium text-gray-800 mb-1">Dashboard Overview</h2>
       <p class="text-gray-500 text-sm">Monitor your key metrics at a glance</p>
@@ -190,18 +190,14 @@
         </div>
       </div>
     </div>
-  </AppLayout>
+  </div>
 </template>
 
 <script>
 import Chart from 'chart.js/auto'
-import AppLayout from '../components/AppLayout.vue'
 
 export default {
   name: 'Home',
-  components: {
-    AppLayout
-  },
   mounted() {
     this.initAlarmChart()
     this.initSoilPhChart()
@@ -404,4 +400,10 @@ export default {
     }
   }
 }
-</script> 
+</script>
+
+<style scoped>
+.home {
+  max-width: 1200px;
+}
+</style> 

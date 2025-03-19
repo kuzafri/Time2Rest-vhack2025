@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <div class="weather-forecast">
     <div class="mb-8">
       <h2 class="text-xl font-medium text-gray-800 mb-1">Weather Forecast</h2>
       <p class="text-gray-500 text-sm">View upcoming weather conditions for your farm</p>
@@ -34,17 +34,12 @@
         </div>
       </div>
     </div>
-  </AppLayout>
+  </div>
 </template>
 
 <script>
-import AppLayout from '../components/AppLayout.vue'
-
 export default {
   name: 'WeatherForecast',
-  components: {
-    AppLayout
-  },
   data() {
     return {
       loading: true,
@@ -100,8 +95,6 @@ export default {
 <style scoped>
 .weather-forecast {
   max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
 }
 
 .loading, .error {

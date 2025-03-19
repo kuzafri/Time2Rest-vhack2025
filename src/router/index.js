@@ -27,7 +27,7 @@ const routes = [
     component: IrrigationOverride
   },
   {
-    path: '/weather-forecast',
+    path: '/weather',
     name: 'WeatherForecast',
     component: WeatherForecast
   }
