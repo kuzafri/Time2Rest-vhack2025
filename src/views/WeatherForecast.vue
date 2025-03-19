@@ -6,29 +6,37 @@
     </div>
     
     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <h3 class="font-medium text-gray-800 mb-4">5-Day Forecast</h3>
-      <div class="forecast-container">
-        <div class="current-weather">
-          <h2>Current Weather in {{ location }}</h2>
-          <div class="weather-info">
-            <div class="temperature">{{ currentWeather.temperature }}°C</div>
-            <div class="condition">{{ currentWeather.condition }}</div>
-            <div class="details">
-              <p>Humidity: {{ currentWeather.humidity }}%</p>
-              <p>Wind: {{ currentWeather.wind }} km/h</p>
+      <div v-if="loading" class="loading">
+        Loading weather data...
+      </div>
+      <div v-else-if="error" class="error">
+        {{ error }}
+      </div>
+      <div v-else>
+        <h3 class="font-medium text-gray-800 mb-4">5-Day Forecast</h3>
+        <div class="forecast-container">
+          <div class="current-weather">
+            <h2>Current Weather in {{ location }}</h2>
+            <div class="weather-info">
+              <div class="temperature">{{ currentWeather.temperature }}°C</div>
+              <div class="condition">{{ currentWeather.condition }}</div>
+              <div class="details">
+                <p>Humidity: {{ currentWeather.humidity }}%</p>
+                <p>Wind: {{ currentWeather.wind }} km/h</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="forecast">
-          <div class="forecast-list">
-            <div v-for="(day, index) in forecast" :key="index" class="forecast-day">
-              <div class="day-name">{{ day.date }}</div>
-              <div class="day-temp">
-                <span class="high">{{ day.highTemp }}°</span> / 
-                <span class="low">{{ day.lowTemp }}°</span>
+          
+          <div class="forecast">
+            <div class="forecast-list">
+              <div v-for="(day, index) in forecast" :key="index" class="forecast-day">
+                <div class="day-name">{{ day.date }}</div>
+                <div class="day-temp">
+                  <span class="high">{{ day.highTemp }}°</span> / 
+                  <span class="low">{{ day.lowTemp }}°</span>
+                </div>
+                <div class="day-condition">{{ day.condition }}</div>
               </div>
-              <div class="day-condition">{{ day.condition }}</div>
             </div>
           </div>
         </div>
@@ -44,44 +52,141 @@ export default {
     return {
       loading: true,
       error: null,
-      location: 'Your Location',
+      location: 'Loading location...',
       currentWeather: {
         temperature: 0,
         condition: '',
         humidity: 0,
         wind: 0
       },
-      forecast: []
+      forecast: [],
+      userCoords: null
     }
   },
   mounted() {
-    // Simulate fetching weather data
-    setTimeout(() => {
-      this.fetchWeatherData();
-    }, 1000);
+    this.getUserLocation();
   },
   methods: {
+    getUserLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.userCoords = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            };
+            this.fetchLocationName();
+            this.fetchWeatherData();
+          },
+          error => {
+            console.error('Error getting location:', error);
+            this.error = 'Unable to access your location. Using default location instead.';
+            // Fall back to default location
+            this.fetchWeatherData();
+          },
+          { timeout: 10000 }
+        );
+      } else {
+        this.error = 'Geolocation is not supported by your browser. Using default location.';
+        this.fetchWeatherData();
+      }
+    },
+    fetchLocationName() {
+      if (this.userCoords) {
+        this.location = 'Finding your location...';
+        
+        // Use a free reverse geocoding API that doesn't require API key for demo purposes
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${this.userCoords.latitude}&lon=${this.userCoords.longitude}&zoom=10`;
+        
+        fetch(url, {
+          headers: {
+            // Add a user agent as required by Nominatim usage policy
+            'User-Agent': 'FarmMonitoringApp/1.0'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.address) {
+              // Extract city/district name from OpenStreetMap data
+              const city = data.address.city || 
+                          data.address.town || 
+                          data.address.village || 
+                          data.address.suburb ||
+                          data.address.county;
+              
+              const state = data.address.state || data.address.region;
+              
+              if (city && state) {
+                this.location = `${city}, ${state}`;
+              } else if (city) {
+                this.location = city;
+              } else {
+                // If we can't get a specific city name, use the display name
+                this.location = data.display_name.split(',').slice(0, 2).join(',');
+              }
+            } else {
+              this.location = 'Your Location';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching location name:', error);
+            this.location = 'Your Location';
+          });
+      }
+    },
     fetchWeatherData() {
-      // This is mock data - in a real app, you would fetch from a weather API
+      // This is mock data - in a real app, you would fetch from a weather API using the coordinates
       try {
-        // Simulate API call
-        this.location = 'New York';
-        this.currentWeather = {
-          temperature: 22,
-          condition: 'Partly Cloudy',
-          humidity: 65,
-          wind: 12
-        };
-        
-        this.forecast = [
-          { date: 'Mon', highTemp: 24, lowTemp: 18, condition: 'Sunny' },
-          { date: 'Tue', highTemp: 22, lowTemp: 17, condition: 'Partly Cloudy' },
-          { date: 'Wed', highTemp: 19, lowTemp: 15, condition: 'Rainy' },
-          { date: 'Thu', highTemp: 21, lowTemp: 16, condition: 'Cloudy' },
-          { date: 'Fri', highTemp: 25, lowTemp: 19, condition: 'Sunny' }
-        ];
-        
-        this.loading = false;
+        // Simulate API call with delay
+        setTimeout(() => {
+          if (this.userCoords) {
+            // If we have user coordinates, we would use them to get local weather
+            // For demo, we'll just show different data based on having coordinates
+            this.currentWeather = {
+              temperature: Math.floor(15 + Math.random() * 15),
+              condition: ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy'][Math.floor(Math.random() * 4)],
+              humidity: Math.floor(50 + Math.random() * 40),
+              wind: Math.floor(5 + Math.random() * 20)
+            };
+            
+            // Generate random forecast based on current weather
+            const conditions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy', 'Stormy'];
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const today = new Date();
+            
+            this.forecast = Array(5).fill().map((_, i) => {
+              const date = new Date(today);
+              date.setDate(today.getDate() + i + 1);
+              const dayName = days[date.getDay()];
+              
+              return {
+                date: dayName,
+                highTemp: Math.floor(18 + Math.random() * 12),
+                lowTemp: Math.floor(10 + Math.random() * 10),
+                condition: conditions[Math.floor(Math.random() * conditions.length)]
+              };
+            });
+          } else {
+            // Default location data (same as original)
+            this.location = 'New York';
+            this.currentWeather = {
+              temperature: 22,
+              condition: 'Partly Cloudy',
+              humidity: 65,
+              wind: 12
+            };
+            
+            this.forecast = [
+              { date: 'Mon', highTemp: 24, lowTemp: 18, condition: 'Sunny' },
+              { date: 'Tue', highTemp: 22, lowTemp: 17, condition: 'Partly Cloudy' },
+              { date: 'Wed', highTemp: 19, lowTemp: 15, condition: 'Rainy' },
+              { date: 'Thu', highTemp: 21, lowTemp: 16, condition: 'Cloudy' },
+              { date: 'Fri', highTemp: 25, lowTemp: 19, condition: 'Sunny' }
+            ];
+          }
+          
+          this.loading = false;
+        }, 1500);
       } catch (err) {
         this.error = 'Failed to load weather data. Please try again later.';
         this.loading = false;
