@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <h1 class="text-xl font-bold text-gray-800">LeaveLeT</h1>
+      <h1 class="text-xl font-bold text-gray-800">LeaveLet</h1>
     </div>
     
     <div class="sidebar-section">
