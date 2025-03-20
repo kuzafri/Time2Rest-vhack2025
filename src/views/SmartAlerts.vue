@@ -1,466 +1,488 @@
 <template>
-  <div class="smart-alerts">
-    <h1>Smart Alerts & Notifications</h1>
-    
-    <div class="alerts-overview">
-      <div class="overview-card">
-        <div class="card-header">
-          <h2>Alert Summary</h2>
-          <div class="time-selector">
-            <button class="time-btn active">Today</button>
-            <button class="time-btn">Week</button>
-            <button class="time-btn">Month</button>
+  <div class="flex-1">
+    <HeaderPage
+      title="Smart Alerts"
+      description="Monitor and manage system notifications and alerts"
+    />
+    <div class="smart-alerts">
+      <h1>Smart Alerts & Notifications</h1>
+
+      <div class="alerts-overview">
+        <div class="overview-card">
+          <div class="card-header">
+            <h2>Alert Summary</h2>
+            <div class="time-selector">
+              <button class="time-btn active">Today</button>
+              <button class="time-btn">Week</button>
+              <button class="time-btn">Month</button>
+            </div>
+          </div>
+          <div class="alert-summary">
+            <div class="summary-item">
+              <div class="summary-icon critical">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="summary-content">
+                <div class="summary-value">2</div>
+                <div class="summary-label">Critical</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-icon warning">
+                <i class="fas fa-exclamation-circle"></i>
+              </div>
+              <div class="summary-content">
+                <div class="summary-value">5</div>
+                <div class="summary-label">Warning</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-icon info">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="summary-content">
+                <div class="summary-value">12</div>
+                <div class="summary-label">Information</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-icon success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="summary-content">
+                <div class="summary-value">8</div>
+                <div class="summary-label">Resolved</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="alert-summary">
-          <div class="summary-item">
-            <div class="summary-icon critical">
+      </div>
+
+      <div class="active-alerts">
+        <div class="section-header">
+          <h2>Active Alerts</h2>
+          <div class="filter-controls">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search alerts..." />
+            </div>
+            <div class="filter-dropdown">
+              <button class="filter-btn">
+                <i class="fas fa-filter"></i>
+                Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alerts-list">
+          <div class="alert-item critical">
+            <div class="alert-icon">
               <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <div class="summary-content">
-              <div class="summary-value">2</div>
-              <div class="summary-label">Critical</div>
+            <div class="alert-content">
+              <div class="alert-header">
+                <h3>Irrigation Pump Failure</h3>
+                <div class="alert-time">15 minutes ago</div>
+              </div>
+              <p class="alert-description">
+                Main irrigation pump (Pump #2) has stopped working. System has
+                switched to backup pump.
+              </p>
+              <div class="alert-actions">
+                <button class="action-btn">
+                  <i class="fas fa-wrench"></i>
+                  Troubleshoot
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-check"></i>
+                  Mark as Resolved
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-bell-slash"></i>
+                  Mute
+                </button>
+              </div>
             </div>
           </div>
-          
-          <div class="summary-item">
-            <div class="summary-icon warning">
+
+          <div class="alert-item critical">
+            <div class="alert-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="alert-content">
+              <div class="alert-header">
+                <h3>Extreme Temperature Alert</h3>
+                <div class="alert-time">32 minutes ago</div>
+              </div>
+              <p class="alert-description">
+                Greenhouse temperature has exceeded 35°C. Ventilation system
+                activated at maximum capacity.
+              </p>
+              <div class="alert-actions">
+                <button class="action-btn">
+                  <i class="fas fa-thermometer-half"></i>
+                  View Temperature Log
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-check"></i>
+                  Mark as Resolved
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-bell-slash"></i>
+                  Mute
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-item warning">
+            <div class="alert-icon">
               <i class="fas fa-exclamation-circle"></i>
             </div>
-            <div class="summary-content">
-              <div class="summary-value">5</div>
-              <div class="summary-label">Warning</div>
+            <div class="alert-content">
+              <div class="alert-header">
+                <h3>Low Soil Moisture</h3>
+                <div class="alert-time">1 hour ago</div>
+              </div>
+              <p class="alert-description">
+                Zone 3 (Herbs) soil moisture has dropped below 25%. Scheduled
+                irrigation will begin in 30 minutes.
+              </p>
+              <div class="alert-actions">
+                <button class="action-btn">
+                  <i class="fas fa-tint"></i>
+                  Irrigate Now
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-check"></i>
+                  Mark as Resolved
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-bell-slash"></i>
+                  Mute
+                </button>
+              </div>
             </div>
           </div>
-          
-          <div class="summary-item">
-            <div class="summary-icon info">
-              <i class="fas fa-info-circle"></i>
+
+          <div class="alert-item warning">
+            <div class="alert-icon">
+              <i class="fas fa-exclamation-circle"></i>
             </div>
-            <div class="summary-content">
-              <div class="summary-value">12</div>
-              <div class="summary-label">Information</div>
-            </div>
-          </div>
-          
-          <div class="summary-item">
-            <div class="summary-icon success">
-              <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="summary-content">
-              <div class="summary-value">8</div>
-              <div class="summary-label">Resolved</div>
+            <div class="alert-content">
+              <div class="alert-header">
+                <h3>Water Tank Level Low</h3>
+                <div class="alert-time">3 hours ago</div>
+              </div>
+              <p class="alert-description">
+                Main water storage tank is at 22% capacity. Automatic refill has
+                been initiated.
+              </p>
+              <div class="alert-actions">
+                <button class="action-btn">
+                  <i class="fas fa-eye"></i>
+                  View Tank Status
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-check"></i>
+                  Mark as Resolved
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-bell-slash"></i>
+                  Mute
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="active-alerts">
-      <div class="section-header">
-        <h2>Active Alerts</h2>
-        <div class="filter-controls">
-          <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search alerts...">
-          </div>
-          <div class="filter-dropdown">
-            <button class="filter-btn">
-              <i class="fas fa-filter"></i>
-              Filter
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="alerts-list">
-        <div class="alert-item critical">
-          <div class="alert-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <div class="alert-content">
-            <div class="alert-header">
-              <h3>Irrigation Pump Failure</h3>
-              <div class="alert-time">15 minutes ago</div>
-            </div>
-            <p class="alert-description">Main irrigation pump (Pump #2) has stopped working. System has switched to backup pump.</p>
-            <div class="alert-actions">
-              <button class="action-btn">
-                <i class="fas fa-wrench"></i>
-                Troubleshoot
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-check"></i>
-                Mark as Resolved
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-bell-slash"></i>
-                Mute
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="alert-item critical">
-          <div class="alert-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <div class="alert-content">
-            <div class="alert-header">
-              <h3>Extreme Temperature Alert</h3>
-              <div class="alert-time">32 minutes ago</div>
-            </div>
-            <p class="alert-description">Greenhouse temperature has exceeded 35°C. Ventilation system activated at maximum capacity.</p>
-            <div class="alert-actions">
-              <button class="action-btn">
-                <i class="fas fa-thermometer-half"></i>
-                View Temperature Log
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-check"></i>
-                Mark as Resolved
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-bell-slash"></i>
-                Mute
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="alert-item warning">
-          <div class="alert-icon">
-            <i class="fas fa-exclamation-circle"></i>
-          </div>
-          <div class="alert-content">
-            <div class="alert-header">
-              <h3>Low Soil Moisture</h3>
-              <div class="alert-time">1 hour ago</div>
-            </div>
-            <p class="alert-description">Zone 3 (Herbs) soil moisture has dropped below 25%. Scheduled irrigation will begin in 30 minutes.</p>
-            <div class="alert-actions">
-              <button class="action-btn">
-                <i class="fas fa-tint"></i>
-                Irrigate Now
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-check"></i>
-                Mark as Resolved
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-bell-slash"></i>
-                Mute
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="alert-item warning">
-          <div class="alert-icon">
-            <i class="fas fa-exclamation-circle"></i>
-          </div>
-          <div class="alert-content">
-            <div class="alert-header">
-              <h3>Water Tank Level Low</h3>
-              <div class="alert-time">3 hours ago</div>
-            </div>
-            <p class="alert-description">Main water storage tank is at 22% capacity. Automatic refill has been initiated.</p>
-            <div class="alert-actions">
-              <button class="action-btn">
-                <i class="fas fa-eye"></i>
-                View Tank Status
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-check"></i>
-                Mark as Resolved
-              </button>
-              <button class="action-btn">
-                <i class="fas fa-bell-slash"></i>
-                Mute
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="notification-settings">
-      <h2>Notification Settings</h2>
-      
-      <div class="settings-card">
-        <div class="settings-section">
-          <h3>Alert Channels</h3>
-          <div class="channel-options">
-            <div class="channel-option">
-              <div class="option-label">
-                <i class="fas fa-mobile-alt"></i>
-                <span>Mobile App Push Notifications</span>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="channel-option">
-              <div class="option-label">
-                <i class="fas fa-envelope"></i>
-                <span>Email Notifications</span>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="channel-option">
-              <div class="option-label">
-                <i class="fas fa-sms"></i>
-                <span>SMS Notifications</span>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox">
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="channel-option">
-              <div class="option-label">
-                <i class="fas fa-bell"></i>
-                <span>Web Browser Notifications</span>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="settings-section">
-          <h3>Alert Priority Settings</h3>
-          <div class="priority-settings">
-            <div class="priority-option">
-              <div class="priority-label">Critical Alerts</div>
-              <div class="priority-channels">
-                <div class="channel-tag active">
+
+      <div class="notification-settings">
+        <h2>Notification Settings</h2>
+
+        <div class="settings-card">
+          <div class="settings-section">
+            <h3>Alert Channels</h3>
+            <div class="channel-options">
+              <div class="channel-option">
+                <div class="option-label">
                   <i class="fas fa-mobile-alt"></i>
+                  <span>Mobile App Push Notifications</span>
                 </div>
-                <div class="channel-tag active">
+                <label class="toggle-switch">
+                  <input type="checkbox" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="channel-option">
+                <div class="option-label">
                   <i class="fas fa-envelope"></i>
+                  <span>Email Notifications</span>
                 </div>
-                <div class="channel-tag active">
+                <label class="toggle-switch">
+                  <input type="checkbox" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="channel-option">
+                <div class="option-label">
                   <i class="fas fa-sms"></i>
+                  <span>SMS Notifications</span>
                 </div>
-                <div class="channel-tag active">
+                <label class="toggle-switch">
+                  <input type="checkbox" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="channel-option">
+                <div class="option-label">
                   <i class="fas fa-bell"></i>
+                  <span>Web Browser Notifications</span>
                 </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked />
+                  <span class="toggle-slider"></span>
+                </label>
               </div>
             </div>
-            
-            <div class="priority-option">
-              <div class="priority-label">Warning Alerts</div>
-              <div class="priority-channels">
-                <div class="channel-tag active">
-                  <i class="fas fa-mobile-alt"></i>
-                </div>
-                <div class="channel-tag active">
-                  <i class="fas fa-envelope"></i>
-                </div>
-                <div class="channel-tag">
-                  <i class="fas fa-sms"></i>
-                </div>
-                <div class="channel-tag active">
-                  <i class="fas fa-bell"></i>
+          </div>
+
+          <div class="settings-section">
+            <h3>Alert Priority Settings</h3>
+            <div class="priority-settings">
+              <div class="priority-option">
+                <div class="priority-label">Critical Alerts</div>
+                <div class="priority-channels">
+                  <div class="channel-tag active">
+                    <i class="fas fa-mobile-alt"></i>
+                  </div>
+                  <div class="channel-tag active">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  <div class="channel-tag active">
+                    <i class="fas fa-sms"></i>
+                  </div>
+                  <div class="channel-tag active">
+                    <i class="fas fa-bell"></i>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div class="priority-option">
-              <div class="priority-label">Information Alerts</div>
-              <div class="priority-channels">
-                <div class="channel-tag active">
-                  <i class="fas fa-mobile-alt"></i>
+
+              <div class="priority-option">
+                <div class="priority-label">Warning Alerts</div>
+                <div class="priority-channels">
+                  <div class="channel-tag active">
+                    <i class="fas fa-mobile-alt"></i>
+                  </div>
+                  <div class="channel-tag active">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  <div class="channel-tag">
+                    <i class="fas fa-sms"></i>
+                  </div>
+                  <div class="channel-tag active">
+                    <i class="fas fa-bell"></i>
+                  </div>
                 </div>
-                <div class="channel-tag">
-                  <i class="fas fa-envelope"></i>
-                </div>
-                <div class="channel-tag">
-                  <i class="fas fa-sms"></i>
-                </div>
-                <div class="channel-tag active">
-                  <i class="fas fa-bell"></i>
+              </div>
+
+              <div class="priority-option">
+                <div class="priority-label">Information Alerts</div>
+                <div class="priority-channels">
+                  <div class="channel-tag active">
+                    <i class="fas fa-mobile-alt"></i>
+                  </div>
+                  <div class="channel-tag">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  <div class="channel-tag">
+                    <i class="fas fa-sms"></i>
+                  </div>
+                  <div class="channel-tag active">
+                    <i class="fas fa-bell"></i>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div class="settings-section">
-          <h3>Quiet Hours</h3>
-          <div class="quiet-hours-settings">
-            <div class="quiet-hours-toggle">
-              <span>Enable Quiet Hours</span>
-              <label class="toggle-switch">
-                <input type="checkbox">
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="time-range">
-              <div class="time-input">
-                <label>From</label>
-                <input type="time" value="22:00">
+
+          <div class="settings-section">
+            <h3>Quiet Hours</h3>
+            <div class="quiet-hours-settings">
+              <div class="quiet-hours-toggle">
+                <span>Enable Quiet Hours</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" />
+                  <span class="toggle-slider"></span>
+                </label>
               </div>
-              <div class="time-input">
-                <label>To</label>
-                <input type="time" value="06:00">
+
+              <div class="time-range">
+                <div class="time-input">
+                  <label>From</label>
+                  <input type="time" value="22:00" />
+                </div>
+                <div class="time-input">
+                  <label>To</label>
+                  <input type="time" value="06:00" />
+                </div>
               </div>
-            </div>
-            
-            <div class="override-option">
-              <label class="checkbox-container">
-                <input type="checkbox" checked>
-                <span class="checkmark"></span>
-                <span>Allow Critical Alerts During Quiet Hours</span>
-              </label>
+
+              <div class="override-option">
+                <label class="checkbox-container">
+                  <input type="checkbox" checked />
+                  <span class="checkmark"></span>
+                  <span>Allow Critical Alerts During Quiet Hours</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="alert-history">
-      <h2>Alert History</h2>
-      
-      <div class="history-chart-container">
-        <canvas ref="historyChart"></canvas>
-      </div>
-      
-      <div class="history-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Alert</th>
-              <th>Type</th>
-              <th>Time</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Water Pump Maintenance Required</td>
-              <td><span class="alert-type info">Info</span></td>
-              <td>Today, 08:45</td>
-              <td><span class="alert-status resolved">Resolved</span></td>
-              <td>
-                <button class="table-action-btn">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>Soil pH Level High in Zone 2</td>
-              <td><span class="alert-type warning">Warning</span></td>
-              <td>Yesterday, 14:22</td>
-              <td><span class="alert-status resolved">Resolved</span></td>
-              <td>
-                <button class="table-action-btn">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>Power Outage Detected</td>
-              <td><span class="alert-type critical">Critical</span></td>
-              <td>2 days ago, 23:17</td>
-              <td><span class="alert-status resolved">Resolved</span></td>
-              <td>
-                <button class="table-action-btn">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>Weather Alert: Heavy Rain Expected</td>
-              <td><span class="alert-type warning">Warning</span></td>
-              <td>3 days ago, 16:05</td>
-              <td><span class="alert-status resolved">Resolved</span></td>
-              <td>
-                <button class="table-action-btn">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+
+      <div class="alert-history">
+        <h2>Alert History</h2>
+
+        <div class="history-chart-container">
+          <canvas ref="historyChart"></canvas>
+        </div>
+
+        <div class="history-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Alert</th>
+                <th>Type</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Water Pump Maintenance Required</td>
+                <td><span class="alert-type info">Info</span></td>
+                <td>Today, 08:45</td>
+                <td><span class="alert-status resolved">Resolved</span></td>
+                <td>
+                  <button class="table-action-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>Soil pH Level High in Zone 2</td>
+                <td><span class="alert-type warning">Warning</span></td>
+                <td>Yesterday, 14:22</td>
+                <td><span class="alert-status resolved">Resolved</span></td>
+                <td>
+                  <button class="table-action-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>Power Outage Detected</td>
+                <td><span class="alert-type critical">Critical</span></td>
+                <td>2 days ago, 23:17</td>
+                <td><span class="alert-status resolved">Resolved</span></td>
+                <td>
+                  <button class="table-action-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>Weather Alert: Heavy Rain Expected</td>
+                <td><span class="alert-type warning">Warning</span></td>
+                <td>3 days ago, 16:05</td>
+                <td><span class="alert-status resolved">Resolved</span></td>
+                <td>
+                  <button class="table-action-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
+import HeaderPage from "@/components/HeaderPage.vue";
+import Chart from "chart.js/auto";
 
 export default {
-  name: 'SmartAlerts',
+  name: "SmartAlerts",
+  components: {
+    HeaderPage,
+  },
   data() {
     return {
-      historyChart: null
-    }
+      historyChart: null,
+    };
   },
   mounted() {
-    this.initHistoryChart()
+    this.initHistoryChart();
   },
   beforeUnmount() {
     if (this.historyChart) {
-      this.historyChart.destroy()
+      this.historyChart.destroy();
     }
   },
   methods: {
     initHistoryChart() {
-      const ctx = this.$refs.historyChart.getContext('2d')
-      
+      const ctx = this.$refs.historyChart.getContext("2d");
+
       this.historyChart = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
           datasets: [
             {
-              label: 'Critical',
+              label: "Critical",
               data: [2, 1, 3, 0, 2, 1, 2],
-              backgroundColor: '#e74c3c'
+              backgroundColor: "#e74c3c",
             },
             {
-              label: 'Warning',
+              label: "Warning",
               data: [5, 4, 3, 6, 2, 3, 5],
-              backgroundColor: '#f39c12'
+              backgroundColor: "#f39c12",
             },
             {
-              label: 'Information',
+              label: "Information",
               data: [8, 10, 6, 9, 12, 7, 12],
-              backgroundColor: '#3498db'
-            }
-          ]
+              backgroundColor: "#3498db",
+            },
+          ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
             x: {
-              stacked: true
+              stacked: true,
             },
             y: {
               stacked: true,
-              beginAtZero: true
-            }
-          }
-        }
-      })
-    }
-  }
-}
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -468,7 +490,9 @@ export default {
   padding: 20px;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   margin-top: 0;
 }
 
@@ -505,9 +529,9 @@ h1, h2, h3 {
 }
 
 .time-btn.active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .alert-summary {
@@ -788,7 +812,7 @@ h1, h2, h3 {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 34px;
 }
 
@@ -800,12 +824,12 @@ h1, h2, h3 {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
 input:checked + .toggle-slider {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 input:checked + .toggle-slider:before {
@@ -841,7 +865,7 @@ input:checked + .toggle-slider:before {
 }
 
 .channel-tag.active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -910,7 +934,7 @@ input:checked + .toggle-slider:before {
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .checkmark:after {
@@ -953,7 +977,8 @@ input:checked + .toggle-slider:before {
   padding: 20px;
 }
 
-.alert-type, .alert-status {
+.alert-type,
+.alert-status {
   padding: 3px 8px;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -1000,4 +1025,4 @@ input:checked + .toggle-slider:before {
 .table-action-btn:hover {
   background-color: #eee;
 }
-</style> 
+</style>

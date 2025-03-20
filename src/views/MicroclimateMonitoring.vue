@@ -1,200 +1,214 @@
 <template>
-  <div class="microclimate-monitoring">
-    <h1>Microclimate Monitoring for Vertical Farming</h1>
-    
-    <div class="dashboard-overview">
-      <div class="overview-card temperature">
-        <div class="card-icon">
-          <i class="fas fa-thermometer-half"></i>
+  <div class="flex-1">
+    <HeaderPage
+      title="Microclimate Monitoring"
+      description="Track and analyze environmental conditions in your growing areas"
+    />
+    <div class="microclimate-monitoring">
+      <h1>Microclimate Monitoring for Vertical Farming</h1>
+
+      <div class="dashboard-overview">
+        <div class="overview-card temperature">
+          <div class="card-icon">
+            <i class="fas fa-thermometer-half"></i>
+          </div>
+          <div class="card-content">
+            <h3>Temperature</h3>
+            <div class="reading">{{ temperature }}°C</div>
+            <div class="status" :class="temperatureStatus.class">
+              {{ temperatureStatus.message }}
+            </div>
+          </div>
         </div>
-        <div class="card-content">
-          <h3>Temperature</h3>
-          <div class="reading">{{ temperature }}°C</div>
-          <div class="status" :class="temperatureStatus.class">
-            {{ temperatureStatus.message }}
+
+        <div class="overview-card humidity">
+          <div class="card-icon">
+            <i class="fas fa-tint"></i>
+          </div>
+          <div class="card-content">
+            <h3>Humidity</h3>
+            <div class="reading">{{ humidity }}%</div>
+            <div class="status" :class="humidityStatus.class">
+              {{ humidityStatus.message }}
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-card co2">
+          <div class="card-icon">
+            <i class="fas fa-cloud"></i>
+          </div>
+          <div class="card-content">
+            <h3>CO₂ Level</h3>
+            <div class="reading">{{ co2 }} ppm</div>
+            <div class="status" :class="co2Status.class">
+              {{ co2Status.message }}
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-card light">
+          <div class="card-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <div class="card-content">
+            <h3>Light Intensity</h3>
+            <div class="reading">{{ light }} lux</div>
+            <div class="status" :class="lightStatus.class">
+              {{ lightStatus.message }}
+            </div>
           </div>
         </div>
       </div>
-      
-      <div class="overview-card humidity">
-        <div class="card-icon">
-          <i class="fas fa-tint"></i>
+
+      <div class="zone-monitoring">
+        <h2>Zone Monitoring</h2>
+        <div class="zone-selector">
+          <button
+            v-for="zone in zones"
+            :key="zone.id"
+            @click="selectZone(zone.id)"
+            :class="{ active: selectedZone === zone.id }"
+            class="zone-button"
+          >
+            {{ zone.name }}
+          </button>
         </div>
-        <div class="card-content">
-          <h3>Humidity</h3>
-          <div class="reading">{{ humidity }}%</div>
-          <div class="status" :class="humidityStatus.class">
-            {{ humidityStatus.message }}
-          </div>
-        </div>
-      </div>
-      
-      <div class="overview-card co2">
-        <div class="card-icon">
-          <i class="fas fa-cloud"></i>
-        </div>
-        <div class="card-content">
-          <h3>CO₂ Level</h3>
-          <div class="reading">{{ co2 }} ppm</div>
-          <div class="status" :class="co2Status.class">
-            {{ co2Status.message }}
-          </div>
-        </div>
-      </div>
-      
-      <div class="overview-card light">
-        <div class="card-icon">
-          <i class="fas fa-lightbulb"></i>
-        </div>
-        <div class="card-content">
-          <h3>Light Intensity</h3>
-          <div class="reading">{{ light }} lux</div>
-          <div class="status" :class="lightStatus.class">
-            {{ lightStatus.message }}
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="zone-monitoring">
-      <h2>Zone Monitoring</h2>
-      <div class="zone-selector">
-        <button 
-          v-for="zone in zones" 
-          :key="zone.id" 
-          @click="selectZone(zone.id)"
-          :class="{ active: selectedZone === zone.id }"
-          class="zone-button"
-        >
-          {{ zone.name }}
-        </button>
-      </div>
-      
-      <div class="zone-details">
-        <div class="zone-visualization">
-          <div class="vertical-farm-visualization">
-            <div 
-              v-for="level in 5" 
-              :key="level" 
-              class="farm-level" 
-              :class="{ 'level-alert': getSelectedZone.alerts.includes(level) }"
-            >
-              <div class="level-info">
-                <span class="level-name">Level {{ level }}</span>
-                <span class="level-temp">{{ 22 - level + Math.floor(Math.random() * 3) }}°C</span>
+
+        <div class="zone-details">
+          <div class="zone-visualization">
+            <div class="vertical-farm-visualization">
+              <div
+                v-for="level in 5"
+                :key="level"
+                class="farm-level"
+                :class="{
+                  'level-alert': getSelectedZone.alerts.includes(level),
+                }"
+              >
+                <div class="level-info">
+                  <span class="level-name">Level {{ level }}</span>
+                  <span class="level-temp"
+                    >{{ 22 - level + Math.floor(Math.random() * 3) }}°C</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div class="zone-charts">
-          <div class="chart-container">
-            <h3>24-Hour Trends</h3>
-            <canvas ref="trendChart"></canvas>
+
+          <div class="zone-charts">
+            <div class="chart-container">
+              <h3>24-Hour Trends</h3>
+              <canvas ref="trendChart"></canvas>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="climate-control">
-      <h2>Climate Control</h2>
-      <div class="control-grid">
-        <div class="control-card">
-          <h3>Temperature Control</h3>
-          <div class="control-settings">
-            <div class="setting">
-              <label>Target Temperature</label>
-              <div class="setting-control">
-                <button @click="decreaseTemp" class="control-btn">-</button>
-                <span class="setting-value">{{ targetTemp }}°C</span>
-                <button @click="increaseTemp" class="control-btn">+</button>
+
+      <div class="climate-control">
+        <h2>Climate Control</h2>
+        <div class="control-grid">
+          <div class="control-card">
+            <h3>Temperature Control</h3>
+            <div class="control-settings">
+              <div class="setting">
+                <label>Target Temperature</label>
+                <div class="setting-control">
+                  <button @click="decreaseTemp" class="control-btn">-</button>
+                  <span class="setting-value">{{ targetTemp }}°C</span>
+                  <button @click="increaseTemp" class="control-btn">+</button>
+                </div>
               </div>
-            </div>
-            <div class="setting">
-              <label>Mode</label>
-              <select v-model="tempMode" class="mode-select">
-                <option value="auto">Automatic</option>
-                <option value="manual">Manual</option>
-                <option value="schedule">Scheduled</option>
-              </select>
-            </div>
-            <div class="control-status" :class="tempControlStatus">
-              {{ tempControlStatus === 'active' ? 'Active' : 'Inactive' }}
+              <div class="setting">
+                <label>Mode</label>
+                <select v-model="tempMode" class="mode-select">
+                  <option value="auto">Automatic</option>
+                  <option value="manual">Manual</option>
+                  <option value="schedule">Scheduled</option>
+                </select>
+              </div>
+              <div class="control-status" :class="tempControlStatus">
+                {{ tempControlStatus === "active" ? "Active" : "Inactive" }}
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="control-card">
-          <h3>Humidity Control</h3>
-          <div class="control-settings">
-            <div class="setting">
-              <label>Target Humidity</label>
-              <div class="setting-control">
-                <button @click="decreaseHumidity" class="control-btn">-</button>
-                <span class="setting-value">{{ targetHumidity }}%</span>
-                <button @click="increaseHumidity" class="control-btn">+</button>
+
+          <div class="control-card">
+            <h3>Humidity Control</h3>
+            <div class="control-settings">
+              <div class="setting">
+                <label>Target Humidity</label>
+                <div class="setting-control">
+                  <button @click="decreaseHumidity" class="control-btn">
+                    -
+                  </button>
+                  <span class="setting-value">{{ targetHumidity }}%</span>
+                  <button @click="increaseHumidity" class="control-btn">
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-            <div class="setting">
-              <label>Mode</label>
-              <select v-model="humidityMode" class="mode-select">
-                <option value="auto">Automatic</option>
-                <option value="manual">Manual</option>
-                <option value="schedule">Scheduled</option>
-              </select>
-            </div>
-            <div class="control-status" :class="humidityControlStatus">
-              {{ humidityControlStatus === 'active' ? 'Active' : 'Inactive' }}
+              <div class="setting">
+                <label>Mode</label>
+                <select v-model="humidityMode" class="mode-select">
+                  <option value="auto">Automatic</option>
+                  <option value="manual">Manual</option>
+                  <option value="schedule">Scheduled</option>
+                </select>
+              </div>
+              <div class="control-status" :class="humidityControlStatus">
+                {{ humidityControlStatus === "active" ? "Active" : "Inactive" }}
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="control-card">
-          <h3>CO₂ Enrichment</h3>
-          <div class="control-settings">
-            <div class="setting">
-              <label>Target CO₂</label>
-              <div class="setting-control">
-                <button @click="decreaseCO2" class="control-btn">-</button>
-                <span class="setting-value">{{ targetCO2 }} ppm</span>
-                <button @click="increaseCO2" class="control-btn">+</button>
+
+          <div class="control-card">
+            <h3>CO₂ Enrichment</h3>
+            <div class="control-settings">
+              <div class="setting">
+                <label>Target CO₂</label>
+                <div class="setting-control">
+                  <button @click="decreaseCO2" class="control-btn">-</button>
+                  <span class="setting-value">{{ targetCO2 }} ppm</span>
+                  <button @click="increaseCO2" class="control-btn">+</button>
+                </div>
               </div>
-            </div>
-            <div class="setting">
-              <label>Mode</label>
-              <select v-model="co2Mode" class="mode-select">
-                <option value="auto">Automatic</option>
-                <option value="manual">Manual</option>
-                <option value="schedule">Scheduled</option>
-              </select>
-            </div>
-            <div class="control-status" :class="co2ControlStatus">
-              {{ co2ControlStatus === 'active' ? 'Active' : 'Inactive' }}
+              <div class="setting">
+                <label>Mode</label>
+                <select v-model="co2Mode" class="mode-select">
+                  <option value="auto">Automatic</option>
+                  <option value="manual">Manual</option>
+                  <option value="schedule">Scheduled</option>
+                </select>
+              </div>
+              <div class="control-status" :class="co2ControlStatus">
+                {{ co2ControlStatus === "active" ? "Active" : "Inactive" }}
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="control-card">
-          <h3>Lighting Control</h3>
-          <div class="control-settings">
-            <div class="setting">
-              <label>Light Intensity</label>
-              <div class="setting-control">
-                <button @click="decreaseLight" class="control-btn">-</button>
-                <span class="setting-value">{{ targetLight }}%</span>
-                <button @click="increaseLight" class="control-btn">+</button>
+
+          <div class="control-card">
+            <h3>Lighting Control</h3>
+            <div class="control-settings">
+              <div class="setting">
+                <label>Light Intensity</label>
+                <div class="setting-control">
+                  <button @click="decreaseLight" class="control-btn">-</button>
+                  <span class="setting-value">{{ targetLight }}%</span>
+                  <button @click="increaseLight" class="control-btn">+</button>
+                </div>
               </div>
-            </div>
-            <div class="setting">
-              <label>Light Cycle</label>
-              <select v-model="lightCycle" class="mode-select">
-                <option value="18-6">18/6 (Veg)</option>
-                <option value="12-12">12/12 (Flower)</option>
-                <option value="custom">Custom</option>
-              </select>
-            </div>
-            <div class="control-status" :class="lightControlStatus">
-              {{ lightControlStatus === 'active' ? 'Active' : 'Inactive' }}
+              <div class="setting">
+                <label>Light Cycle</label>
+                <select v-model="lightCycle" class="mode-select">
+                  <option value="18-6">18/6 (Veg)</option>
+                  <option value="12-12">12/12 (Flower)</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <div class="control-status" :class="lightControlStatus">
+                {{ lightControlStatus === "active" ? "Active" : "Inactive" }}
+              </div>
             </div>
           </div>
         </div>
@@ -204,10 +218,14 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
+import HeaderPage from "@/components/HeaderPage.vue";
+import Chart from "chart.js/auto";
 
 export default {
-  name: 'MicroclimateMonitoring',
+  name: "MicroclimateMonitoring",
+  components: {
+    HeaderPage,
+  },
   data() {
     return {
       // Current readings
@@ -215,227 +233,245 @@ export default {
       humidity: 65,
       co2: 850,
       light: 12500,
-      
+
       // Target settings
       targetTemp: 24,
       targetHumidity: 70,
       targetCO2: 900,
       targetLight: 80,
-      
+
       // Control modes
-      tempMode: 'auto',
-      humidityMode: 'auto',
-      co2Mode: 'auto',
-      lightCycle: '18-6',
-      
+      tempMode: "auto",
+      humidityMode: "auto",
+      co2Mode: "auto",
+      lightCycle: "18-6",
+
       // Control statuses
-      tempControlStatus: 'active',
-      humidityControlStatus: 'active',
-      co2ControlStatus: 'inactive',
-      lightControlStatus: 'active',
-      
+      tempControlStatus: "active",
+      humidityControlStatus: "active",
+      co2ControlStatus: "inactive",
+      lightControlStatus: "active",
+
       // Zones
       zones: [
-        { id: 1, name: 'Zone A - Leafy Greens', alerts: [2, 4] },
-        { id: 2, name: 'Zone B - Herbs', alerts: [] },
-        { id: 3, name: 'Zone C - Strawberries', alerts: [3] },
-        { id: 4, name: 'Zone D - Microgreens', alerts: [1] }
+        { id: 1, name: "Zone A - Leafy Greens", alerts: [2, 4] },
+        { id: 2, name: "Zone B - Herbs", alerts: [] },
+        { id: 3, name: "Zone C - Strawberries", alerts: [3] },
+        { id: 4, name: "Zone D - Microgreens", alerts: [1] },
       ],
       selectedZone: 1,
-      
+
       // Charts
       trendChart: null,
-      readingInterval: null
-    }
+      readingInterval: null,
+    };
   },
   computed: {
     temperatureStatus() {
       if (this.temperature < 18) {
-        return { message: 'Too Cold', class: 'status-warning' }
+        return { message: "Too Cold", class: "status-warning" };
       } else if (this.temperature > 28) {
-        return { message: 'Too Hot', class: 'status-danger' }
+        return { message: "Too Hot", class: "status-danger" };
       } else {
-        return { message: 'Optimal', class: 'status-good' }
+        return { message: "Optimal", class: "status-good" };
       }
     },
     humidityStatus() {
       if (this.humidity < 50) {
-        return { message: 'Too Dry', class: 'status-warning' }
+        return { message: "Too Dry", class: "status-warning" };
       } else if (this.humidity > 80) {
-        return { message: 'Too Humid', class: 'status-danger' }
+        return { message: "Too Humid", class: "status-danger" };
       } else {
-        return { message: 'Optimal', class: 'status-good' }
+        return { message: "Optimal", class: "status-good" };
       }
     },
     co2Status() {
       if (this.co2 < 600) {
-        return { message: 'Low', class: 'status-warning' }
+        return { message: "Low", class: "status-warning" };
       } else if (this.co2 > 1200) {
-        return { message: 'High', class: 'status-danger' }
+        return { message: "High", class: "status-danger" };
       } else {
-        return { message: 'Optimal', class: 'status-good' }
+        return { message: "Optimal", class: "status-good" };
       }
     },
     lightStatus() {
       if (this.light < 10000) {
-        return { message: 'Low Light', class: 'status-warning' }
+        return { message: "Low Light", class: "status-warning" };
       } else if (this.light > 30000) {
-        return { message: 'High Light', class: 'status-warning' }
+        return { message: "High Light", class: "status-warning" };
       } else {
-        return { message: 'Optimal', class: 'status-good' }
+        return { message: "Optimal", class: "status-good" };
       }
     },
     getSelectedZone() {
-      return this.zones.find(zone => zone.id === this.selectedZone) || this.zones[0]
-    }
+      return (
+        this.zones.find((zone) => zone.id === this.selectedZone) ||
+        this.zones[0]
+      );
+    },
   },
   mounted() {
-    this.initTrendChart()
-    this.simulateReadings()
+    this.initTrendChart();
+    this.simulateReadings();
   },
   beforeUnmount() {
     if (this.trendChart) {
-      this.trendChart.destroy()
+      this.trendChart.destroy();
     }
-    clearInterval(this.readingInterval)
+    clearInterval(this.readingInterval);
   },
   methods: {
     selectZone(zoneId) {
-      this.selectedZone = zoneId
-      this.updateTrendChart()
+      this.selectedZone = zoneId;
+      this.updateTrendChart();
     },
     initTrendChart() {
-      const ctx = this.$refs.trendChart.getContext('2d')
-      
+      const ctx = this.$refs.trendChart.getContext("2d");
+
       // Generate time labels for the last 24 hours
-      const labels = []
+      const labels = [];
       for (let i = 24; i >= 0; i--) {
-        const hour = new Date()
-        hour.setHours(hour.getHours() - i)
-        labels.push(hour.getHours() + ':00')
+        const hour = new Date();
+        hour.setHours(hour.getHours() - i);
+        labels.push(hour.getHours() + ":00");
       }
-      
+
       // Generate random data for demonstration
-      const tempData = Array(25).fill().map(() => Math.random() * 5 + 20)
-      const humidityData = Array(25).fill().map(() => Math.random() * 20 + 60)
-      const co2Data = Array(25).fill().map(() => Math.random() * 300 + 700)
-      
+      const tempData = Array(25)
+        .fill()
+        .map(() => Math.random() * 5 + 20);
+      const humidityData = Array(25)
+        .fill()
+        .map(() => Math.random() * 20 + 60);
+      const co2Data = Array(25)
+        .fill()
+        .map(() => Math.random() * 300 + 700);
+
       this.trendChart = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
           labels: labels,
           datasets: [
             {
-              label: 'Temperature (°C)',
+              label: "Temperature (°C)",
               data: tempData,
-              borderColor: '#FF6384',
-              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              borderColor: "#FF6384",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
               tension: 0.4,
-              yAxisID: 'y'
+              yAxisID: "y",
             },
             {
-              label: 'Humidity (%)',
+              label: "Humidity (%)",
               data: humidityData,
-              borderColor: '#36A2EB',
-              backgroundColor: 'rgba(54, 162, 235, 0.1)',
+              borderColor: "#36A2EB",
+              backgroundColor: "rgba(54, 162, 235, 0.1)",
               tension: 0.4,
-              yAxisID: 'y'
+              yAxisID: "y",
             },
             {
-              label: 'CO₂ (ppm)',
+              label: "CO₂ (ppm)",
               data: co2Data,
-              borderColor: '#4BC0C0',
-              backgroundColor: 'rgba(75, 192, 192, 0.1)',
+              borderColor: "#4BC0C0",
+              backgroundColor: "rgba(75, 192, 192, 0.1)",
               tension: 0.4,
-              yAxisID: 'y1'
-            }
-          ]
+              yAxisID: "y1",
+            },
+          ],
         },
         options: {
           responsive: true,
           interaction: {
-            mode: 'index',
-            intersect: false
+            mode: "index",
+            intersect: false,
           },
           plugins: {
             title: {
               display: true,
-              text: 'Environmental Conditions'
-            }
+              text: "Environmental Conditions",
+            },
           },
           scales: {
             y: {
-              type: 'linear',
+              type: "linear",
               display: true,
-              position: 'left',
+              position: "left",
               title: {
                 display: true,
-                text: 'Temperature (°C) / Humidity (%)'
-              }
+                text: "Temperature (°C) / Humidity (%)",
+              },
             },
             y1: {
-              type: 'linear',
+              type: "linear",
               display: true,
-              position: 'right',
+              position: "right",
               title: {
                 display: true,
-                text: 'CO₂ (ppm)'
+                text: "CO₂ (ppm)",
               },
               grid: {
-                drawOnChartArea: false
-              }
-            }
-          }
-        }
-      })
+                drawOnChartArea: false,
+              },
+            },
+          },
+        },
+      });
     },
     updateTrendChart() {
       // In a real app, you would fetch data for the selected zone
       // For demo, we'll just generate new random data
-      const tempData = Array(25).fill().map(() => Math.random() * 5 + 20)
-      const humidityData = Array(25).fill().map(() => Math.random() * 20 + 60)
-      const co2Data = Array(25).fill().map(() => Math.random() * 300 + 700)
-      
-      this.trendChart.data.datasets[0].data = tempData
-      this.trendChart.data.datasets[1].data = humidityData
-      this.trendChart.data.datasets[2].data = co2Data
-      this.trendChart.update()
+      const tempData = Array(25)
+        .fill()
+        .map(() => Math.random() * 5 + 20);
+      const humidityData = Array(25)
+        .fill()
+        .map(() => Math.random() * 20 + 60);
+      const co2Data = Array(25)
+        .fill()
+        .map(() => Math.random() * 300 + 700);
+
+      this.trendChart.data.datasets[0].data = tempData;
+      this.trendChart.data.datasets[1].data = humidityData;
+      this.trendChart.data.datasets[2].data = co2Data;
+      this.trendChart.update();
     },
     simulateReadings() {
       // Simulate changing readings
       this.readingInterval = setInterval(() => {
-        this.temperature = +(this.temperature + (Math.random() - 0.5) * 0.5).toFixed(1)
-        this.humidity = Math.round(this.humidity + (Math.random() - 0.5) * 2)
-        this.co2 = Math.round(this.co2 + (Math.random() - 0.5) * 20)
-        this.light = Math.round(this.light + (Math.random() - 0.5) * 500)
-      }, 5000)
+        this.temperature = +(
+          this.temperature +
+          (Math.random() - 0.5) * 0.5
+        ).toFixed(1);
+        this.humidity = Math.round(this.humidity + (Math.random() - 0.5) * 2);
+        this.co2 = Math.round(this.co2 + (Math.random() - 0.5) * 20);
+        this.light = Math.round(this.light + (Math.random() - 0.5) * 500);
+      }, 5000);
     },
     increaseTemp() {
-      this.targetTemp = Math.min(30, this.targetTemp + 0.5)
+      this.targetTemp = Math.min(30, this.targetTemp + 0.5);
     },
     decreaseTemp() {
-      this.targetTemp = Math.max(15, this.targetTemp - 0.5)
+      this.targetTemp = Math.max(15, this.targetTemp - 0.5);
     },
     increaseHumidity() {
-      this.targetHumidity = Math.min(90, this.targetHumidity + 5)
+      this.targetHumidity = Math.min(90, this.targetHumidity + 5);
     },
     decreaseHumidity() {
-      this.targetHumidity = Math.max(40, this.targetHumidity - 5)
+      this.targetHumidity = Math.max(40, this.targetHumidity - 5);
     },
     increaseCO2() {
-      this.targetCO2 = Math.min(1500, this.targetCO2 + 50)
+      this.targetCO2 = Math.min(1500, this.targetCO2 + 50);
     },
     decreaseCO2() {
-      this.targetCO2 = Math.max(400, this.targetCO2 - 50)
+      this.targetCO2 = Math.max(400, this.targetCO2 - 50);
     },
     increaseLight() {
-      this.targetLight = Math.min(100, this.targetLight + 5)
+      this.targetLight = Math.min(100, this.targetLight + 5);
     },
     decreaseLight() {
-      this.targetLight = Math.max(0, this.targetLight - 5)
-    }
-  }
-}
+      this.targetLight = Math.max(0, this.targetLight - 5);
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -472,22 +508,22 @@ export default {
 
 .temperature .card-icon {
   background-color: rgba(255, 99, 132, 0.1);
-  color: #FF6384;
+  color: #ff6384;
 }
 
 .humidity .card-icon {
   background-color: rgba(54, 162, 235, 0.1);
-  color: #36A2EB;
+  color: #36a2eb;
 }
 
 .co2 .card-icon {
   background-color: rgba(75, 192, 192, 0.1);
-  color: #4BC0C0;
+  color: #4bc0c0;
 }
 
 .light .card-icon {
   background-color: rgba(255, 205, 86, 0.1);
-  color: #FFCD56;
+  color: #ffcd56;
 }
 
 .card-content {
@@ -515,17 +551,17 @@ export default {
 
 .status-good {
   background-color: rgba(75, 192, 192, 0.2);
-  color: #4BC0C0;
+  color: #4bc0c0;
 }
 
 .status-warning {
   background-color: rgba(255, 205, 86, 0.2);
-  color: #FFCD56;
+  color: #ffcd56;
 }
 
 .status-danger {
   background-color: rgba(255, 99, 132, 0.2);
-  color: #FF6384;
+  color: #ff6384;
 }
 
 .zone-monitoring {
@@ -549,9 +585,9 @@ export default {
 }
 
 .zone-button.active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .zone-details {
@@ -581,7 +617,7 @@ export default {
 
 .level-alert {
   background-color: rgba(255, 99, 132, 0.2);
-  border-left: 4px solid #FF6384;
+  border-left: 4px solid #ff6384;
 }
 
 .chart-container {
@@ -679,11 +715,11 @@ export default {
 
 .active {
   background-color: rgba(75, 192, 192, 0.2);
-  color: #4BC0C0;
+  color: #4bc0c0;
 }
 
 .inactive {
   background-color: rgba(201, 203, 207, 0.2);
   color: #6c757d;
 }
-</style> 
+</style>

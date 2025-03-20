@@ -1,245 +1,277 @@
 <template>
-  <div class="water-recycling">
-    <h1>Water Recycling & Efficiency Monitoring</h1>
-    
-    <div class="overview-cards">
-      <div class="overview-card">
-        <div class="card-icon">
-          <i class="fas fa-tint"></i>
-        </div>
-        <div class="card-content">
-          <h3>Total Water Usage</h3>
-          <div class="card-value">12,450 <span class="unit">Liters</span></div>
-          <div class="card-comparison">
-            <i class="fas fa-arrow-down"></i> 8% from last week
+  <div class="flex-1">
+    <HeaderPage
+      title="Water Recycling"
+      description="Monitor and manage water recycling systems for sustainable farming"
+    />
+    <div class="water-recycling">
+      <h1>Water Recycling & Efficiency Monitoring</h1>
+
+      <div class="overview-cards">
+        <div class="overview-card">
+          <div class="card-icon">
+            <i class="fas fa-tint"></i>
           </div>
-        </div>
-      </div>
-      
-      <div class="overview-card">
-        <div class="card-icon">
-          <i class="fas fa-recycle"></i>
-        </div>
-        <div class="card-content">
-          <h3>Recycled Water</h3>
-          <div class="card-value">4,320 <span class="unit">Liters</span></div>
-          <div class="card-comparison">
-            <i class="fas fa-arrow-up"></i> 12% from last week
-          </div>
-        </div>
-      </div>
-      
-      <div class="overview-card">
-        <div class="card-icon">
-          <i class="fas fa-percentage"></i>
-        </div>
-        <div class="card-content">
-          <h3>Recycling Rate</h3>
-          <div class="card-value">34.7<span class="unit">%</span></div>
-          <div class="card-comparison">
-            <i class="fas fa-arrow-up"></i> 5.2% from last week
-          </div>
-        </div>
-      </div>
-      
-      <div class="overview-card">
-        <div class="card-icon">
-          <i class="fas fa-leaf"></i>
-        </div>
-        <div class="card-content">
-          <h3>Water Savings</h3>
-          <div class="card-value">1,850 <span class="unit">Liters</span></div>
-          <div class="card-comparison">
-            <i class="fas fa-arrow-up"></i> 15% from last week
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="recycling-system">
-      <h2>Recycling System Status</h2>
-      <div class="system-diagram">
-        <div class="diagram-container">
-          <div class="diagram-node source">
-            <i class="fas fa-faucet"></i>
-            <span>Water Source</span>
-          </div>
-          <div class="diagram-arrow">
-            <div class="flow-indicator"></div>
-          </div>
-          <div class="diagram-node irrigation">
-            <i class="fas fa-seedling"></i>
-            <span>Irrigation</span>
-          </div>
-          <div class="diagram-arrow">
-            <div class="flow-indicator"></div>
-          </div>
-          <div class="diagram-node collection">
-            <i class="fas fa-water"></i>
-            <span>Collection</span>
-          </div>
-          <div class="diagram-arrow">
-            <div class="flow-indicator"></div>
-          </div>
-          <div class="diagram-node filtration">
-            <i class="fas fa-filter"></i>
-            <span>Filtration</span>
-          </div>
-          <div class="diagram-arrow">
-            <div class="flow-indicator"></div>
-          </div>
-          <div class="diagram-node storage">
-            <i class="fas fa-database"></i>
-            <span>Storage</span>
-          </div>
-          <div class="diagram-arrow return-arrow">
-            <div class="flow-indicator"></div>
-          </div>
-        </div>
-        
-        <div class="system-stats">
-          <div class="stat-item">
-            <h3>Collection Efficiency</h3>
-            <div class="progress-bar">
-              <div class="progress" style="width: 78%"></div>
+          <div class="card-content">
+            <h3>Total Water Usage</h3>
+            <div class="card-value">
+              12,450 <span class="unit">Liters</span>
             </div>
-            <div class="stat-value">78%</div>
-          </div>
-          
-          <div class="stat-item">
-            <h3>Filtration Quality</h3>
-            <div class="progress-bar">
-              <div class="progress" style="width: 92%"></div>
-            </div>
-            <div class="stat-value">92%</div>
-          </div>
-          
-          <div class="stat-item">
-            <h3>Storage Capacity</h3>
-            <div class="progress-bar">
-              <div class="progress" style="width: 45%"></div>
-            </div>
-            <div class="stat-value">45%</div>
-          </div>
-          
-          <div class="stat-item">
-            <h3>System Health</h3>
-            <div class="progress-bar">
-              <div class="progress" style="width: 85%"></div>
-            </div>
-            <div class="stat-value">85%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="efficiency-analytics">
-      <h2>Water Efficiency Analytics</h2>
-      
-      <div class="analytics-charts">
-        <div class="chart-card">
-          <h3>Water Usage vs. Recycling</h3>
-          <div class="chart-container">
-            <canvas ref="usageChart"></canvas>
-          </div>
-        </div>
-        
-        <div class="chart-card">
-          <h3>Efficiency by Zone</h3>
-          <div class="chart-container">
-            <canvas ref="zoneChart"></canvas>
-          </div>
-        </div>
-      </div>
-      
-      <div class="efficiency-table">
-        <h3>Water Usage Breakdown</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Zone</th>
-              <th>Usage (L)</th>
-              <th>Recycled (L)</th>
-              <th>Efficiency</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Zone 1 - Vegetables</td>
-              <td>3,450</td>
-              <td>1,240</td>
-              <td>36%</td>
-              <td><span class="status good">Good</span></td>
-            </tr>
-            <tr>
-              <td>Zone 2 - Fruits</td>
-              <td>4,120</td>
-              <td>1,650</td>
-              <td>40%</td>
-              <td><span class="status excellent">Excellent</span></td>
-            </tr>
-            <tr>
-              <td>Zone 3 - Herbs</td>
-              <td>1,980</td>
-              <td>580</td>
-              <td>29%</td>
-              <td><span class="status needs-improvement">Needs Improvement</span></td>
-            </tr>
-            <tr>
-              <td>Zone 4 - Flowers</td>
-              <td>2,900</td>
-              <td>850</td>
-              <td>29%</td>
-              <td><span class="status needs-improvement">Needs Improvement</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <div class="optimization-recommendations">
-      <h2>AI Optimization Recommendations</h2>
-      
-      <div class="recommendations-list">
-        <div class="recommendation-item">
-          <div class="recommendation-icon">
-            <i class="fas fa-wrench"></i>
-          </div>
-          <div class="recommendation-content">
-            <h3>Improve Zone 3 Collection System</h3>
-            <p>The collection trays in Zone 3 are operating at reduced efficiency. Cleaning the filters and adjusting the collection angle could improve recycling rates by up to 15%.</p>
-            <div class="recommendation-impact">
-              <span>Estimated Impact:</span>
-              <div class="impact-value positive">+290L weekly recycling</div>
+            <div class="card-comparison">
+              <i class="fas fa-arrow-down"></i> 8% from last week
             </div>
           </div>
         </div>
-        
-        <div class="recommendation-item">
-          <div class="recommendation-icon">
-            <i class="fas fa-clock"></i>
+
+        <div class="overview-card">
+          <div class="card-icon">
+            <i class="fas fa-recycle"></i>
           </div>
-          <div class="recommendation-content">
-            <h3>Optimize Irrigation Timing</h3>
-            <p>Shifting irrigation in Zone 1 to early morning (5-6 AM) could reduce evaporation loss by approximately 12%, increasing the amount of water available for recycling.</p>
-            <div class="recommendation-impact">
-              <span>Estimated Impact:</span>
-              <div class="impact-value positive">+8% collection efficiency</div>
+          <div class="card-content">
+            <h3>Recycled Water</h3>
+            <div class="card-value">4,320 <span class="unit">Liters</span></div>
+            <div class="card-comparison">
+              <i class="fas fa-arrow-up"></i> 12% from last week
             </div>
           </div>
         </div>
-        
-        <div class="recommendation-item">
-          <div class="recommendation-icon">
-            <i class="fas fa-filter"></i>
+
+        <div class="overview-card">
+          <div class="card-icon">
+            <i class="fas fa-percentage"></i>
           </div>
-          <div class="recommendation-content">
-            <h3>Upgrade Filtration System</h3>
-            <p>The current filtration system is operating at 92% efficiency. Upgrading to a multi-stage filtration system would improve water quality and allow for expanded reuse applications.</p>
-            <div class="recommendation-impact">
-              <span>Estimated Impact:</span>
-              <div class="impact-value positive">+5% overall recycling rate</div>
+          <div class="card-content">
+            <h3>Recycling Rate</h3>
+            <div class="card-value">34.7<span class="unit">%</span></div>
+            <div class="card-comparison">
+              <i class="fas fa-arrow-up"></i> 5.2% from last week
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-card">
+          <div class="card-icon">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <div class="card-content">
+            <h3>Water Savings</h3>
+            <div class="card-value">1,850 <span class="unit">Liters</span></div>
+            <div class="card-comparison">
+              <i class="fas fa-arrow-up"></i> 15% from last week
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recycling-system">
+        <h2>Recycling System Status</h2>
+        <div class="system-diagram">
+          <div class="diagram-container">
+            <div class="diagram-node source">
+              <i class="fas fa-faucet"></i>
+              <span>Water Source</span>
+            </div>
+            <div class="diagram-arrow">
+              <div class="flow-indicator"></div>
+            </div>
+            <div class="diagram-node irrigation">
+              <i class="fas fa-seedling"></i>
+              <span>Irrigation</span>
+            </div>
+            <div class="diagram-arrow">
+              <div class="flow-indicator"></div>
+            </div>
+            <div class="diagram-node collection">
+              <i class="fas fa-water"></i>
+              <span>Collection</span>
+            </div>
+            <div class="diagram-arrow">
+              <div class="flow-indicator"></div>
+            </div>
+            <div class="diagram-node filtration">
+              <i class="fas fa-filter"></i>
+              <span>Filtration</span>
+            </div>
+            <div class="diagram-arrow">
+              <div class="flow-indicator"></div>
+            </div>
+            <div class="diagram-node storage">
+              <i class="fas fa-database"></i>
+              <span>Storage</span>
+            </div>
+            <div class="diagram-arrow return-arrow">
+              <div class="flow-indicator"></div>
+            </div>
+          </div>
+
+          <div class="system-stats">
+            <div class="stat-item">
+              <h3>Collection Efficiency</h3>
+              <div class="progress-bar">
+                <div class="progress" style="width: 78%"></div>
+              </div>
+              <div class="stat-value">78%</div>
+            </div>
+
+            <div class="stat-item">
+              <h3>Filtration Quality</h3>
+              <div class="progress-bar">
+                <div class="progress" style="width: 92%"></div>
+              </div>
+              <div class="stat-value">92%</div>
+            </div>
+
+            <div class="stat-item">
+              <h3>Storage Capacity</h3>
+              <div class="progress-bar">
+                <div class="progress" style="width: 45%"></div>
+              </div>
+              <div class="stat-value">45%</div>
+            </div>
+
+            <div class="stat-item">
+              <h3>System Health</h3>
+              <div class="progress-bar">
+                <div class="progress" style="width: 85%"></div>
+              </div>
+              <div class="stat-value">85%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="efficiency-analytics">
+        <h2>Water Efficiency Analytics</h2>
+
+        <div class="analytics-charts">
+          <div class="chart-card">
+            <h3>Water Usage vs. Recycling</h3>
+            <div class="chart-container">
+              <canvas ref="usageChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Efficiency by Zone</h3>
+            <div class="chart-container">
+              <canvas ref="zoneChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="efficiency-table">
+          <h3>Water Usage Breakdown</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Zone</th>
+                <th>Usage (L)</th>
+                <th>Recycled (L)</th>
+                <th>Efficiency</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Zone 1 - Vegetables</td>
+                <td>3,450</td>
+                <td>1,240</td>
+                <td>36%</td>
+                <td><span class="status good">Good</span></td>
+              </tr>
+              <tr>
+                <td>Zone 2 - Fruits</td>
+                <td>4,120</td>
+                <td>1,650</td>
+                <td>40%</td>
+                <td><span class="status excellent">Excellent</span></td>
+              </tr>
+              <tr>
+                <td>Zone 3 - Herbs</td>
+                <td>1,980</td>
+                <td>580</td>
+                <td>29%</td>
+                <td>
+                  <span class="status needs-improvement"
+                    >Needs Improvement</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>Zone 4 - Flowers</td>
+                <td>2,900</td>
+                <td>850</td>
+                <td>29%</td>
+                <td>
+                  <span class="status needs-improvement"
+                    >Needs Improvement</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="optimization-recommendations">
+        <h2>AI Optimization Recommendations</h2>
+
+        <div class="recommendations-list">
+          <div class="recommendation-item">
+            <div class="recommendation-icon">
+              <i class="fas fa-wrench"></i>
+            </div>
+            <div class="recommendation-content">
+              <h3>Improve Zone 3 Collection System</h3>
+              <p>
+                The collection trays in Zone 3 are operating at reduced
+                efficiency. Cleaning the filters and adjusting the collection
+                angle could improve recycling rates by up to 15%.
+              </p>
+              <div class="recommendation-impact">
+                <span>Estimated Impact:</span>
+                <div class="impact-value positive">+290L weekly recycling</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="recommendation-item">
+            <div class="recommendation-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="recommendation-content">
+              <h3>Optimize Irrigation Timing</h3>
+              <p>
+                Shifting irrigation in Zone 1 to early morning (5-6 AM) could
+                reduce evaporation loss by approximately 12%, increasing the
+                amount of water available for recycling.
+              </p>
+              <div class="recommendation-impact">
+                <span>Estimated Impact:</span>
+                <div class="impact-value positive">
+                  +8% collection efficiency
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="recommendation-item">
+            <div class="recommendation-icon">
+              <i class="fas fa-filter"></i>
+            </div>
+            <div class="recommendation-content">
+              <h3>Upgrade Filtration System</h3>
+              <p>
+                The current filtration system is operating at 92% efficiency.
+                Upgrading to a multi-stage filtration system would improve water
+                quality and allow for expanded reuse applications.
+              </p>
+              <div class="recommendation-impact">
+                <span>Estimated Impact:</span>
+                <div class="impact-value positive">
+                  +5% overall recycling rate
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -249,52 +281,56 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
+import HeaderPage from "@/components/HeaderPage.vue";
+import Chart from "chart.js/auto";
 
 export default {
-  name: 'WaterRecycling',
+  name: "WaterRecycling",
+  components: {
+    HeaderPage,
+  },
   data() {
     return {
       usageChart: null,
-      zoneChart: null
-    }
+      zoneChart: null,
+    };
   },
   mounted() {
-    this.initUsageChart()
-    this.initZoneChart()
+    this.initUsageChart();
+    this.initZoneChart();
   },
   beforeUnmount() {
     if (this.usageChart) {
-      this.usageChart.destroy()
+      this.usageChart.destroy();
     }
     if (this.zoneChart) {
-      this.zoneChart.destroy()
+      this.zoneChart.destroy();
     }
   },
   methods: {
     initUsageChart() {
-      const ctx = this.$refs.usageChart.getContext('2d')
-      
+      const ctx = this.$refs.usageChart.getContext("2d");
+
       this.usageChart = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
-          labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
           datasets: [
             {
-              label: 'Total Usage (L)',
+              label: "Total Usage (L)",
               data: [14200, 13800, 13500, 13100, 12800, 12450],
-              backgroundColor: 'rgba(54, 162, 235, 0.7)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1
+              backgroundColor: "rgba(54, 162, 235, 0.7)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
             },
             {
-              label: 'Recycled Water (L)',
+              label: "Recycled Water (L)",
               data: [3200, 3450, 3600, 3850, 4100, 4320],
-              backgroundColor: 'rgba(75, 192, 192, 0.7)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
-            }
-          ]
+              backgroundColor: "rgba(75, 192, 192, 0.7)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
         },
         options: {
           responsive: true,
@@ -303,79 +339,85 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Water Volume (Liters)'
-              }
-            }
-          }
-        }
-      })
+                text: "Water Volume (Liters)",
+              },
+            },
+          },
+        },
+      });
     },
     initZoneChart() {
-      const ctx = this.$refs.zoneChart.getContext('2d')
-      
+      const ctx = this.$refs.zoneChart.getContext("2d");
+
       this.zoneChart = new Chart(ctx, {
-        type: 'radar',
+        type: "radar",
         data: {
-          labels: ['Collection Efficiency', 'Irrigation Efficiency', 'Recycling Rate', 'Water Quality', 'System Health'],
+          labels: [
+            "Collection Efficiency",
+            "Irrigation Efficiency",
+            "Recycling Rate",
+            "Water Quality",
+            "System Health",
+          ],
           datasets: [
             {
-              label: 'Zone 1',
+              label: "Zone 1",
               data: [75, 82, 36, 90, 88],
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              pointBackgroundColor: "rgba(255, 99, 132, 1)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgba(255, 99, 132, 1)",
             },
             {
-              label: 'Zone 2',
+              label: "Zone 2",
               data: [80, 85, 40, 92, 90],
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              pointBackgroundColor: "rgba(54, 162, 235, 1)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgba(54, 162, 235, 1)",
             },
             {
-              label: 'Zone 3',
+              label: "Zone 3",
               data: [65, 75, 29, 88, 82],
-              backgroundColor: 'rgba(255, 206, 86, 0.2)',
-              borderColor: 'rgba(255, 206, 86, 1)',
-              pointBackgroundColor: 'rgba(255, 206, 86, 1)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgba(255, 206, 86, 1)'
+              backgroundColor: "rgba(255, 206, 86, 0.2)",
+              borderColor: "rgba(255, 206, 86, 1)",
+              pointBackgroundColor: "rgba(255, 206, 86, 1)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgba(255, 206, 86, 1)",
             },
             {
-              label: 'Zone 4',
+              label: "Zone 4",
               data: [70, 78, 29, 85, 80],
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgba(75, 192, 192, 1)'
-            }
-          ]
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              pointBackgroundColor: "rgba(75, 192, 192, 1)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgba(75, 192, 192, 1)",
+            },
+          ],
         },
         options: {
           responsive: true,
           scales: {
             r: {
               angleLines: {
-                display: true
+                display: true,
               },
               suggestedMin: 0,
-              suggestedMax: 100
-            }
-          }
-        }
-      })
-    }
-  }
-}
+              suggestedMax: 100,
+            },
+          },
+        },
+      });
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -383,7 +425,8 @@ export default {
   padding: 20px;
 }
 
-h1, h2 {
+h1,
+h2 {
   margin-bottom: 20px;
 }
 
@@ -408,7 +451,7 @@ h1, h2 {
   height: 50px;
   border-radius: 50%;
   background-color: rgba(76, 175, 80, 0.1);
-  color: #4CAF50;
+  color: #4caf50;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -448,7 +491,7 @@ h1, h2 {
 }
 
 .fa-arrow-up {
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 .fa-arrow-down {
@@ -545,8 +588,8 @@ h1, h2 {
     90deg,
     transparent,
     transparent 5px,
-    #4CAF50 5px,
-    #4CAF50 10px
+    #4caf50 5px,
+    #4caf50 10px
   );
   animation: flowAnimation 2s linear infinite;
 }
@@ -560,8 +603,8 @@ h1, h2 {
     0deg,
     transparent,
     transparent 5px,
-    #4CAF50 5px,
-    #4CAF50 10px
+    #4caf50 5px,
+    #4caf50 10px
   );
 }
 
@@ -613,7 +656,7 @@ h1, h2 {
 
 .progress {
   height: 100%;
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .stat-value {
@@ -672,7 +715,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -729,7 +773,7 @@ th {
   height: 50px;
   border-radius: 50%;
   background-color: rgba(76, 175, 80, 0.1);
-  color: #4CAF50;
+  color: #4caf50;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -774,4 +818,4 @@ th {
   background-color: rgba(231, 76, 60, 0.2);
   color: #e74c3c;
 }
-</style> 
+</style>
