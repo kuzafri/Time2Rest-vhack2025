@@ -3,7 +3,7 @@
     <div class="sidebar-header">
       <h1 class="text-xl font-bold text-gray-800">LeaveLet</h1>
     </div>
-    
+
     <div class="sidebar-section">
       <div class="section-title">MAIN</div>
       <nav class="sidebar-nav">
@@ -53,7 +53,7 @@
         </router-link>
       </nav>
     </div>
-    
+
     <div class="sidebar-section">
       <div class="section-title">MANAGEMENT</div>
       <nav class="sidebar-nav">
@@ -72,8 +72,8 @@
 
 <script>
 export default {
-  name: 'Sidebar'
-}
+  name: "Sidebar",
+};
 </script>
 
 <style scoped>
@@ -144,4 +144,4 @@ export default {
   color: #4f46e5;
   font-weight: 500;
 }
-</style> 
+</style>

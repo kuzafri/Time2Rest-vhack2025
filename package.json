@@ -10,6 +10,12 @@
   },
   "dependencies": {
     "chart.js": "^4.4.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^0.483.0",
+    "reka-ui": "^2.1.0",
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss-animate": "^1.0.7",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
