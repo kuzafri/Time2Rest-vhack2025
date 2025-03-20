@@ -14,6 +14,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Pause, Play, RotateCcw, Square } from "lucide-vue-next";
 import { ref } from "vue";
+import { format } from "date-fns";
 
 interface Zone {
   id: number;
@@ -23,6 +24,17 @@ interface Zone {
   flowPercent: number;
   duration: string;
   intensity: "low" | "medium" | "high";
+}
+
+interface IrrigationHistoryEntry {
+  id: number;
+  zoneId: number;
+  zoneName: string;
+  pumpId: string;
+  startTime: Date;
+  duration: number; // in minutes
+  waterUsage: number; // in liters
+  status: "completed" | "interrupted" | "error";
 }
 
 const selectedZoneFilter = ref<string>("all");
@@ -64,6 +76,81 @@ const zones = ref<Zone[]>([
     intensity: "medium",
   },
 ]);
+
+// Irrigation History Data
+const irrigationHistory = ref<IrrigationHistoryEntry[]>([
+  {
+    id: 1,
+    zoneId: 1,
+    zoneName: "Front Lawn",
+    pumpId: "P-101",
+    startTime: new Date(2023, 9, 15, 6, 30), // Oct 15, 2023, 6:30 AM
+    duration: 30,
+    waterUsage: 120,
+    status: "completed"
+  },
+  {
+    id: 2,
+    zoneId: 2,
+    zoneName: "Backyard",
+    pumpId: "P-102",
+    startTime: new Date(2023, 9, 15, 7, 0), // Oct 15, 2023, 7:00 AM
+    duration: 45,
+    waterUsage: 180,
+    status: "completed"
+  },
+  {
+    id: 3,
+    zoneId: 3,
+    zoneName: "Garden",
+    pumpId: "P-101",
+    startTime: new Date(2023, 9, 14, 6, 30), // Oct 14, 2023, 6:30 AM
+    duration: 20,
+    waterUsage: 80,
+    status: "completed"
+  },
+  {
+    id: 4,
+    zoneId: 4,
+    zoneName: "Side Yard",
+    pumpId: "P-103",
+    startTime: new Date(2023, 9, 14, 7, 15), // Oct 14, 2023, 7:15 AM
+    duration: 15,
+    waterUsage: 60,
+    status: "interrupted"
+  },
+  {
+    id: 5,
+    zoneId: 1,
+    zoneName: "Front Lawn",
+    pumpId: "P-101",
+    startTime: new Date(2023, 9, 13, 6, 30), // Oct 13, 2023, 6:30 AM
+    duration: 30,
+    waterUsage: 120,
+    status: "error"
+  }
+]);
+
+const formatDate = (date: Date) => {
+  return format(date, "MMM dd, yyyy");
+};
+
+const formatTime = (date: Date) => {
+  return format(date, "h:mm a");
+};
+
+const getStatusColor = (status: IrrigationHistoryEntry["status"]) => {
+  switch (status) {
+    case "completed":
+      return "text-green-600";
+    case "interrupted":
+      return "text-yellow-600";
+    case "error":
+      return "text-red-600";
+    default:
+      return "text-gray-600";
+  }
+};
 
 const getZoneStatusBadgeVariant = (status: Zone["status"]) => {
   switch (status) {
@@ -301,6 +388,72 @@ const getZoneStatusText = (status: Zone["status"]) => {
           </CardContent>
         </Card>
       </div>
+    </div>
+
+    <!-- Irrigation History -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="font-semibold text-2xl text-gray-800">Irrigation History</h2>
+        <Button variant="outline" size="sm">
+          <i class="fas fa-download mr-2"></i>
+          Export Data
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Irrigation Activities</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b">
+                  <th class="text-left py-3 px-4 font-medium">Zone</th>
+                  <th class="text-left py-3 px-4 font-medium">Pump ID</th>
+                  <th class="text-left py-3 px-4 font-medium">Date</th>
+                  <th class="text-left py-3 px-4 font-medium">Time</th>
+                  <th class="text-left py-3 px-4 font-medium">Duration</th>
+                  <th class="text-left py-3 px-4 font-medium">Water Usage</th>
+                  <th class="text-left py-3 px-4 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr 
+                  v-for="entry in irrigationHistory" 
+                  :key="entry.id"
+                  class="border-b hover:bg-gray-50"
+                >
+                  <td class="py-3 px-4">
+                    <div class="font-medium">{{ entry.zoneName }}</div>
+                    <div class="text-xs text-gray-500">Zone {{ entry.zoneId }}</div>
+                  </td>
+                  <td class="py-3 px-4">{{ entry.pumpId }}</td>
+                  <td class="py-3 px-4">{{ formatDate(entry.startTime) }}</td>
+                  <td class="py-3 px-4">{{ formatTime(entry.startTime) }}</td>
+                  <td class="py-3 px-4">{{ entry.duration }} min</td>
+                  <td class="py-3 px-4">{{ entry.waterUsage }} L</td>
+                  <td class="py-3 px-4">
+                    <span :class="getStatusColor(entry.status)" class="font-medium">
+                      {{ entry.status.charAt(0).toUpperCase() + entry.status.slice(1) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="mt-6 flex justify-between items-center">
+            <div class="text-sm text-gray-500">
+              Showing 5 of 24 entries
+            </div>
+            <div class="flex space-x-2">
+              <Button variant="outline" size="sm" disabled>Previous</Button>
+              <Button variant="outline" size="sm">Next</Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>
