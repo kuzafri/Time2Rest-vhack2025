@@ -1,73 +1,92 @@
 <template>
-  <div class="pest-detection">
-    <h1>AI-Powered Pest & Disease Detection</h1>
-    
-    <div class="camera-section">
-      <div class="camera-feed">
-        <div v-if="!isStreaming" class="camera-placeholder">
-          <i class="fas fa-camera"></i>
-          <p>Camera feed will appear here</p>
-          <button @click="startCamera" class="primary-button">Start Camera</button>
+  <div class="flex-1">
+    <HeaderPage
+      title="Pest & Disease Detection"
+      description="Monitor and identify potential threats to your crops"
+    />
+    <div class="pest-detection">
+      <h1>AI-Powered Pest & Disease Detection</h1>
+
+      <div class="camera-section">
+        <div class="camera-feed">
+          <div v-if="!isStreaming" class="camera-placeholder">
+            <i class="fas fa-camera"></i>
+            <p>Camera feed will appear here</p>
+            <button @click="startCamera" class="primary-button">
+              Start Camera
+            </button>
+          </div>
+          <video v-else ref="videoElement" autoplay></video>
+          <canvas ref="canvasElement" style="display: none"></canvas>
         </div>
-        <video v-else ref="videoElement" autoplay></video>
-        <canvas ref="canvasElement" style="display: none;"></canvas>
+
+        <div class="camera-controls" v-if="isStreaming">
+          <button @click="captureImage" class="primary-button">
+            <i class="fas fa-camera"></i> Capture Image
+          </button>
+          <button @click="stopCamera" class="secondary-button">
+            <i class="fas fa-stop"></i> Stop Camera
+          </button>
+        </div>
       </div>
-      
-      <div class="camera-controls" v-if="isStreaming">
-        <button @click="captureImage" class="primary-button">
-          <i class="fas fa-camera"></i> Capture Image
-        </button>
-        <button @click="stopCamera" class="secondary-button">
-          <i class="fas fa-stop"></i> Stop Camera
-        </button>
-      </div>
-    </div>
-    
-    <div class="detection-results" v-if="detectionResults.length > 0">
-      <h2>Detection Results</h2>
-      <div class="results-grid">
-        <div v-for="(result, index) in detectionResults" :key="index" class="result-card">
-          <img :src="result.image" alt="Captured image" class="result-image">
-          <div class="result-details">
-            <h3>{{ result.issue }}</h3>
-            <div class="confidence">
-              <span>Confidence: {{ result.confidence }}%</span>
-              <div class="confidence-bar">
-                <div class="confidence-level" :style="{width: result.confidence + '%'}"></div>
+
+      <div class="detection-results" v-if="detectionResults.length > 0">
+        <h2>Detection Results</h2>
+        <div class="results-grid">
+          <div
+            v-for="(result, index) in detectionResults"
+            :key="index"
+            class="result-card"
+          >
+            <img
+              :src="result.image"
+              alt="Captured image"
+              class="result-image"
+            />
+            <div class="result-details">
+              <h3>{{ result.issue }}</h3>
+              <div class="confidence">
+                <span>Confidence: {{ result.confidence }}%</span>
+                <div class="confidence-bar">
+                  <div
+                    class="confidence-level"
+                    :style="{ width: result.confidence + '%' }"
+                  ></div>
+                </div>
               </div>
+              <p>{{ result.description }}</p>
+              <div class="recommendation">
+                <h4>Recommended Action:</h4>
+                <p>{{ result.recommendation }}</p>
+              </div>
+              <p class="timestamp">Detected on: {{ result.timestamp }}</p>
             </div>
-            <p>{{ result.description }}</p>
-            <div class="recommendation">
-              <h4>Recommended Action:</h4>
-              <p>{{ result.recommendation }}</p>
-            </div>
-            <p class="timestamp">Detected on: {{ result.timestamp }}</p>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="detection-history">
-      <h2>Detection History</h2>
-      <div class="history-chart">
-        <canvas ref="historyChart"></canvas>
-      </div>
-      <div class="history-stats">
-        <div class="stat-card">
-          <h3>Total Scans</h3>
-          <p>124</p>
+
+      <div class="detection-history">
+        <h2>Detection History</h2>
+        <div class="history-chart">
+          <canvas ref="historyChart"></canvas>
         </div>
-        <div class="stat-card">
-          <h3>Issues Detected</h3>
-          <p>18</p>
-        </div>
-        <div class="stat-card">
-          <h3>Healthy Scans</h3>
-          <p>106</p>
-        </div>
-        <div class="stat-card">
-          <h3>Detection Rate</h3>
-          <p>14.5%</p>
+        <div class="history-stats">
+          <div class="stat-card">
+            <h3>Total Scans</h3>
+            <p>124</p>
+          </div>
+          <div class="stat-card">
+            <h3>Issues Detected</h3>
+            <p>18</p>
+          </div>
+          <div class="stat-card">
+            <h3>Healthy Scans</h3>
+            <p>106</p>
+          </div>
+          <div class="stat-card">
+            <h3>Detection Rate</h3>
+            <p>14.5%</p>
+          </div>
         </div>
       </div>
     </div>
@@ -75,130 +94,141 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
+import HeaderPage from "@/components/HeaderPage.vue";
+import Chart from "chart.js/auto";
 
 export default {
-  name: 'PestDetection',
+  name: "PestDetection",
+  components: {
+    HeaderPage,
+  },
   data() {
     return {
       isStreaming: false,
       stream: null,
       detectionResults: [
         {
-          image: 'https://via.placeholder.com/300x200',
-          issue: 'Powdery Mildew',
+          image: "https://via.placeholder.com/300x200",
+          issue: "Powdery Mildew",
           confidence: 92,
-          description: 'Powdery mildew detected on cucumber leaves. This fungal disease appears as white powdery spots on the upper sides of leaves.',
-          recommendation: 'Apply organic fungicide and improve air circulation around plants. Remove severely affected leaves.',
-          timestamp: '2023-06-15 14:32'
+          description:
+            "Powdery mildew detected on cucumber leaves. This fungal disease appears as white powdery spots on the upper sides of leaves.",
+          recommendation:
+            "Apply organic fungicide and improve air circulation around plants. Remove severely affected leaves.",
+          timestamp: "2023-06-15 14:32",
         },
         {
-          image: 'https://via.placeholder.com/300x200',
-          issue: 'Aphid Infestation',
+          image: "https://via.placeholder.com/300x200",
+          issue: "Aphid Infestation",
           confidence: 87,
-          description: 'Small clusters of aphids detected on tomato stems. These pests suck plant sap and can transmit viruses.',
-          recommendation: 'Spray with insecticidal soap or neem oil. Introduce ladybugs as natural predators.',
-          timestamp: '2023-06-14 09:15'
-        }
+          description:
+            "Small clusters of aphids detected on tomato stems. These pests suck plant sap and can transmit viruses.",
+          recommendation:
+            "Spray with insecticidal soap or neem oil. Introduce ladybugs as natural predators.",
+          timestamp: "2023-06-14 09:15",
+        },
       ],
-      historyChart: null
-    }
+      historyChart: null,
+    };
   },
   mounted() {
-    this.initHistoryChart()
+    this.initHistoryChart();
   },
   beforeUnmount() {
-    this.stopCamera()
+    this.stopCamera();
     if (this.historyChart) {
-      this.historyChart.destroy()
+      this.historyChart.destroy();
     }
   },
   methods: {
     startCamera() {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(stream => {
-            this.stream = stream
-            this.isStreaming = true
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then((stream) => {
+            this.stream = stream;
+            this.isStreaming = true;
             this.$nextTick(() => {
-              this.$refs.videoElement.srcObject = stream
-            })
+              this.$refs.videoElement.srcObject = stream;
+            });
           })
-          .catch(err => {
-            console.error('Error accessing camera:', err)
-            alert('Unable to access camera. Please check permissions.')
-          })
+          .catch((err) => {
+            console.error("Error accessing camera:", err);
+            alert("Unable to access camera. Please check permissions.");
+          });
       } else {
-        alert('Your browser does not support camera access')
+        alert("Your browser does not support camera access");
       }
     },
     stopCamera() {
       if (this.stream) {
-        this.stream.getTracks().forEach(track => track.stop())
-        this.stream = null
-        this.isStreaming = false
+        this.stream.getTracks().forEach((track) => track.stop());
+        this.stream = null;
+        this.isStreaming = false;
       }
     },
     captureImage() {
-      const video = this.$refs.videoElement
-      const canvas = this.$refs.canvasElement
-      const context = canvas.getContext('2d')
-      
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
-      context.drawImage(video, 0, 0, canvas.width, canvas.height)
-      
-      const imageData = canvas.toDataURL('image/png')
-      
+      const video = this.$refs.videoElement;
+      const canvas = this.$refs.canvasElement;
+      const context = canvas.getContext("2d");
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = canvas.toDataURL("image/png");
+
       // Simulate AI analysis (in a real app, you'd send this to your AI service)
       setTimeout(() => {
         this.detectionResults.unshift({
           image: imageData,
-          issue: 'Leaf Spot Disease',
+          issue: "Leaf Spot Disease",
           confidence: Math.floor(Math.random() * 20) + 80, // Random confidence between 80-99%
-          description: 'Brown spots detected on leaves indicating fungal infection. This can spread to other plants if not treated.',
-          recommendation: 'Remove affected leaves, improve air circulation, and apply copper-based fungicide.',
-          timestamp: new Date().toLocaleString()
-        })
-      }, 1500)
+          description:
+            "Brown spots detected on leaves indicating fungal infection. This can spread to other plants if not treated.",
+          recommendation:
+            "Remove affected leaves, improve air circulation, and apply copper-based fungicide.",
+          timestamp: new Date().toLocaleString(),
+        });
+      }, 1500);
     },
     initHistoryChart() {
-      const ctx = this.$refs.historyChart.getContext('2d')
-      
+      const ctx = this.$refs.historyChart.getContext("2d");
+
       this.historyChart = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
           datasets: [
             {
-              label: 'Pest Detections',
+              label: "Pest Detections",
               data: [5, 8, 12, 7, 10, 6],
-              borderColor: '#FF6384',
-              backgroundColor: 'rgba(255, 99, 132, 0.1)',
-              tension: 0.4
+              borderColor: "#FF6384",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              tension: 0.4,
             },
             {
-              label: 'Disease Detections',
+              label: "Disease Detections",
               data: [3, 5, 8, 13, 8, 12],
-              borderColor: '#36A2EB',
-              backgroundColor: 'rgba(54, 162, 235, 0.1)',
-              tension: 0.4
-            }
-          ]
+              borderColor: "#36A2EB",
+              backgroundColor: "rgba(54, 162, 235, 0.1)",
+              tension: 0.4,
+            },
+          ],
         },
         options: {
           responsive: true,
           plugins: {
             title: {
               display: true,
-              text: 'Detection Trends Over Time'
-            }
-          }
-        }
-      })
-    }
-  }
-}
+              text: "Detection Trends Over Time",
+            },
+          },
+        },
+      });
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -250,7 +280,7 @@ export default {
 }
 
 .primary-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -319,7 +349,7 @@ export default {
 
 .confidence-level {
   height: 100%;
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .recommendation {
@@ -368,6 +398,6 @@ export default {
 .stat-card p {
   font-size: 2rem;
   font-weight: bold;
-  color: #4CAF50;
+  color: #4caf50;
 }
-</style> 
+</style>

@@ -1,20 +1,19 @@
-<script>
-import Sidebar from './components/Sidebar.vue'
-
-export default {
-  name: 'App',
-  components: {
-    Sidebar
-  }
-}
+<script setup>
+import Sidebar from "./components/Sidebar.vue";
+import AppSidebar from "./components/AppSidebar.vue";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 </script>
 
 <template>
-  <div id="app">
-    <Sidebar />
-    <div class="content-wrapper">
-      <router-view />
-    </div>
+  <div id="app" class="flex min-h-screen w-full overflow-x-hidden">
+    <SidebarProvider>
+      <AppSidebar />
+
+      <div class="flex-1 w-full p-4 overflow-x-hidden">
+        <SidebarTrigger />
+        <router-view />
+      </div>
+    </SidebarProvider>
   </div>
 </template>
 
@@ -24,19 +23,17 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  display: flex;
 }
 
 .content-wrapper {
   flex: 1;
-  margin-left: 250px; /* Same as sidebar width */
-  padding: 2rem;
 }
 
 /* Global styles */
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 * {
