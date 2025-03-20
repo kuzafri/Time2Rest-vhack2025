@@ -1,821 +1,613 @@
 <template>
-  <div class="flex-1">
+  <div class="flex-1 w-full space-y-8">
     <HeaderPage
       title="Water Recycling"
       description="Monitor and manage water recycling systems for sustainable farming"
     />
-    <div class="water-recycling">
-      <h1>Water Recycling & Efficiency Monitoring</h1>
 
-      <div class="overview-cards">
-        <div class="overview-card">
-          <div class="card-icon">
-            <i class="fas fa-tint"></i>
-          </div>
-          <div class="card-content">
-            <h3>Total Water Usage</h3>
-            <div class="card-value">
-              12,450 <span class="unit">Liters</span>
-            </div>
-            <div class="card-comparison">
-              <i class="fas fa-arrow-down"></i> 8% from last week
-            </div>
-          </div>
-        </div>
+    <h1 class="text-2xl font-bold">Water Recycling & Efficiency Monitoring</h1>
 
-        <div class="overview-card">
-          <div class="card-icon">
-            <i class="fas fa-recycle"></i>
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Card v-for="(item, index) in overviewData" :key="index">
+        <CardContent class="p-6 flex items-start space-x-4">
+          <div
+            :class="[
+              'w-12 h-12 rounded-full flex items-center justify-center',
+              item.iconClass,
+            ]"
+          >
+            <component :is="item.icon" class="w-6 h-6" />
           </div>
-          <div class="card-content">
-            <h3>Recycled Water</h3>
-            <div class="card-value">4,320 <span class="unit">Liters</span></div>
-            <div class="card-comparison">
-              <i class="fas fa-arrow-up"></i> 12% from last week
+          <div>
+            <h3 class="text-sm font-medium text-zinc-500 mb-1">
+              {{ item.title }}
+            </h3>
+            <div class="text-xl font-bold">
+              {{ item.value }}
+              <span class="text-sm font-normal text-zinc-500">{{
+                item.unit
+              }}</span>
+            </div>
+            <div class="text-sm text-zinc-500 flex items-center mt-1">
+              <component
+                :is="item.trend === 'up' ? ArrowUpRight : ArrowDownRight"
+                :class="[
+                  'w-4 h-4 mr-1',
+                  item.trend === 'up' ? 'text-emerald-500' : 'text-red-500',
+                ]"
+              />
+              <span>{{ item.change }}% from last week</span>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
+    </div>
 
-        <div class="overview-card">
-          <div class="card-icon">
-            <i class="fas fa-percentage"></i>
-          </div>
-          <div class="card-content">
-            <h3>Recycling Rate</h3>
-            <div class="card-value">34.7<span class="unit">%</span></div>
-            <div class="card-comparison">
-              <i class="fas fa-arrow-up"></i> 5.2% from last week
-            </div>
-          </div>
-        </div>
-
-        <div class="overview-card">
-          <div class="card-icon">
-            <i class="fas fa-leaf"></i>
-          </div>
-          <div class="card-content">
-            <h3>Water Savings</h3>
-            <div class="card-value">1,850 <span class="unit">Liters</span></div>
-            <div class="card-comparison">
-              <i class="fas fa-arrow-up"></i> 15% from last week
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="recycling-system">
-        <h2>Recycling System Status</h2>
-        <div class="system-diagram">
-          <div class="diagram-container">
-            <div class="diagram-node source">
-              <i class="fas fa-faucet"></i>
-              <span>Water Source</span>
-            </div>
-            <div class="diagram-arrow">
-              <div class="flow-indicator"></div>
-            </div>
-            <div class="diagram-node irrigation">
-              <i class="fas fa-seedling"></i>
-              <span>Irrigation</span>
-            </div>
-            <div class="diagram-arrow">
-              <div class="flow-indicator"></div>
-            </div>
-            <div class="diagram-node collection">
-              <i class="fas fa-water"></i>
-              <span>Collection</span>
-            </div>
-            <div class="diagram-arrow">
-              <div class="flow-indicator"></div>
-            </div>
-            <div class="diagram-node filtration">
-              <i class="fas fa-filter"></i>
-              <span>Filtration</span>
-            </div>
-            <div class="diagram-arrow">
-              <div class="flow-indicator"></div>
-            </div>
-            <div class="diagram-node storage">
-              <i class="fas fa-database"></i>
-              <span>Storage</span>
-            </div>
-            <div class="diagram-arrow return-arrow">
-              <div class="flow-indicator"></div>
-            </div>
+    <!-- Recycling System Status -->
+    <h2 class="text-2xl font-bold mb-4">Recycling System Status</h2>
+    <Card>
+      <CardHeader class="pt-2"> </CardHeader>
+      <CardContent>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 bg-white rounded-md p-9 md:p-14">
+            <Carousel
+              class="w-full px-2"
+              :opts="{
+                align: 'start',
+              }"
+              :plugins="[
+                Autoplay({
+                  delay: 2000,
+                }),
+              ]"
+            >
+              <CarouselContent>
+                <CarouselItem
+                  v-for="(stage, index) in systemStages"
+                  :key="index"
+                  class="basis-full md:basis-1/2 lg:basis-1/3"
+                >
+                  <div class="flex flex-col items-center p-2">
+                    <div
+                      :class="[
+                        'w-24 h-124 p-2 rounded-full text-white flex flex-col items-center justify-center',
+                        stage.bgColor,
+                      ]"
+                    >
+                      <component :is="stage.icon" class="w-6 h-6 p-0 mb-1" />
+                      <span class="text-xs font-light text-center">{{
+                        stage.name
+                      }}</span>
+                    </div>
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
 
-          <div class="system-stats">
-            <div class="stat-item">
-              <h3>Collection Efficiency</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width: 78%"></div>
+          <div class="space-y-4">
+            <div
+              v-for="(metric, key) in systemMetrics"
+              :key="key"
+              class="space-y-2"
+            >
+              <div class="flex justify-between items-center">
+                <h3 class="text-sm font-medium">{{ metric.label }}</h3>
+                <span class="text-sm font-semibold">{{ metric.value }}%</span>
               </div>
-              <div class="stat-value">78%</div>
-            </div>
-
-            <div class="stat-item">
-              <h3>Filtration Quality</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width: 92%"></div>
-              </div>
-              <div class="stat-value">92%</div>
-            </div>
-
-            <div class="stat-item">
-              <h3>Storage Capacity</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width: 45%"></div>
-              </div>
-              <div class="stat-value">45%</div>
-            </div>
-
-            <div class="stat-item">
-              <h3>System Health</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width: 85%"></div>
-              </div>
-              <div class="stat-value">85%</div>
+              <Progress :model-value="metric.value" class="h-2" />
             </div>
           </div>
         </div>
-      </div>
+      </CardContent>
+    </Card>
 
-      <div class="efficiency-analytics">
-        <h2>Water Efficiency Analytics</h2>
+    <!-- Water Efficiency Analytics -->
+    <h2 class="text-2xl font-bold mb-4">Water Efficiency Analytics</h2>
+    <Card>
+      <CardHeader class="pt-2"> </CardHeader>
 
-        <div class="analytics-charts">
-          <div class="chart-card">
-            <h3>Water Usage vs. Recycling</h3>
-            <div class="chart-container">
-              <canvas ref="usageChart"></canvas>
+      <CardContent>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-md p-4">
+            <h3 class="text-base font-medium mb-4">
+              Water Usage vs. Recycling
+            </h3>
+            <div class="h-[300px]">
+              <canvas ref="usageChartRef"></canvas>
             </div>
           </div>
 
-          <div class="chart-card">
-            <h3>Efficiency by Zone</h3>
-            <div class="chart-container">
-              <canvas ref="zoneChart"></canvas>
+          <div class="bg-white rounded-md p-4">
+            <h3 class="text-base font-medium mb-4">Efficiency by Zone</h3>
+            <div class="h-[300px]">
+              <canvas ref="zoneChartRef"></canvas>
             </div>
           </div>
         </div>
 
-        <div class="efficiency-table">
-          <h3>Water Usage Breakdown</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Zone</th>
-                <th>Usage (L)</th>
-                <th>Recycled (L)</th>
-                <th>Efficiency</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Zone 1 - Vegetables</td>
-                <td>3,450</td>
-                <td>1,240</td>
-                <td>36%</td>
-                <td><span class="status good">Good</span></td>
-              </tr>
-              <tr>
-                <td>Zone 2 - Fruits</td>
-                <td>4,120</td>
-                <td>1,650</td>
-                <td>40%</td>
-                <td><span class="status excellent">Excellent</span></td>
-              </tr>
-              <tr>
-                <td>Zone 3 - Herbs</td>
-                <td>1,980</td>
-                <td>580</td>
-                <td>29%</td>
-                <td>
-                  <span class="status needs-improvement"
-                    >Needs Improvement</span
-                  >
-                </td>
-              </tr>
-              <tr>
-                <td>Zone 4 - Flowers</td>
-                <td>2,900</td>
-                <td>850</td>
-                <td>29%</td>
-                <td>
-                  <span class="status needs-improvement"
-                    >Needs Improvement</span
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div>
+          <h3 class="text-base font-semibold mb-4">Water Usage Breakdown</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Zone</TableHead>
+                <TableHead>Usage (L)</TableHead>
+                <TableHead>Recycled (L)</TableHead>
+                <TableHead>Efficiency</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="(row, index) in zoneData" :key="index">
+                <TableCell>{{ row.zone }}</TableCell>
+                <TableCell>{{ row.usage }}</TableCell>
+                <TableCell>{{ row.recycled }}</TableCell>
+                <TableCell>{{ row.efficiency }}</TableCell>
+                <TableCell>
+                  <Badge variant="outline" :class="row.status.variant">{{
+                    row.status.label
+                  }}</Badge>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
-      </div>
+      </CardContent>
+    </Card>
 
-      <div class="optimization-recommendations">
-        <h2>AI Optimization Recommendations</h2>
-
-        <div class="recommendations-list">
-          <div class="recommendation-item">
-            <div class="recommendation-icon">
-              <i class="fas fa-wrench"></i>
+    <!-- AI Optimization Recommendations -->
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-base font-semibold"
+          >AI Optimization Recommendations</CardTitle
+        >
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-6">
+          <div
+            class="flex flex-col items-start space-y-4 p-4 rounded-lg border bg-card"
+          >
+            <div class="flex items-center space-x-4">
+              <div
+                class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0"
+              >
+                <Wrench class="w-6 h-6" />
+              </div>
+              <h3 class="font-medium">Improve Zone 3 Collection System</h3>
             </div>
-            <div class="recommendation-content">
-              <h3>Improve Zone 3 Collection System</h3>
-              <p>
+            <div class="space-y-2">
+              <p class="text-muted-foreground">
                 The collection trays in Zone 3 are operating at reduced
                 efficiency. Cleaning the filters and adjusting the collection
                 angle could improve recycling rates by up to 15%.
               </p>
-              <div class="recommendation-impact">
-                <span>Estimated Impact:</span>
-                <div class="impact-value positive">+290L weekly recycling</div>
+              <div class="flex items-center text-sm">
+                <span class="text-muted-foreground mr-2"
+                  >Estimated Impact:</span
+                >
+                <span
+                  class="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs font-medium text-center"
+                  >+290L weekly recycling</span
+                >
               </div>
             </div>
           </div>
 
-          <div class="recommendation-item">
-            <div class="recommendation-icon">
-              <i class="fas fa-clock"></i>
+          <div
+            class="flex flex-col items-start space-y-4 p-4 rounded-lg border bg-card"
+          >
+            <div class="flex items-center space-x-4">
+              <div
+                class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0"
+              >
+                <Clock class="w-6 h-6" />
+              </div>
+              <h3 class="font-medium">Optimize Irrigation Timing</h3>
             </div>
-            <div class="recommendation-content">
-              <h3>Optimize Irrigation Timing</h3>
-              <p>
+            <div class="space-y-2">
+              <p class="text-muted-foreground">
                 Shifting irrigation in Zone 1 to early morning (5-6 AM) could
                 reduce evaporation loss by approximately 12%, increasing the
                 amount of water available for recycling.
               </p>
-              <div class="recommendation-impact">
-                <span>Estimated Impact:</span>
-                <div class="impact-value positive">
-                  +8% collection efficiency
-                </div>
+              <div class="flex items-center text-sm">
+                <span class="text-muted-foreground mr-2"
+                  >Estimated Impact:</span
+                >
+                <span
+                  class="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs font-medium text-center"
+                  >+8% collection efficiency</span
+                >
               </div>
             </div>
           </div>
 
-          <div class="recommendation-item">
-            <div class="recommendation-icon">
-              <i class="fas fa-filter"></i>
+          <div
+            class="flex flex-col items-start space-y-4 p-4 rounded-lg border bg-card"
+          >
+            <div class="flex items-center space-x-4">
+              <div
+                class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0"
+              >
+                <Filter class="w-6 h-6" />
+              </div>
+              <h3 class="font-medium">Upgrade Filtration System</h3>
             </div>
-            <div class="recommendation-content">
-              <h3>Upgrade Filtration System</h3>
-              <p>
+            <div class="space-y-2">
+              <p class="text-muted-foreground">
                 The current filtration system is operating at 92% efficiency.
                 Upgrading to a multi-stage filtration system would improve water
                 quality and allow for expanded reuse applications.
               </p>
-              <div class="recommendation-impact">
-                <span>Estimated Impact:</span>
-                <div class="impact-value positive">
-                  +5% overall recycling rate
-                </div>
+              <div class="flex items-center text-sm">
+                <span class="text-muted-foreground mr-2"
+                  >Estimated Impact:</span
+                >
+                <span
+                  class="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs font-medium text-center"
+                  >+5% overall recycling rate</span
+                >
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import HeaderPage from "@/components/HeaderPage.vue";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Droplet,
+  Recycle,
+  Percent,
+  Flower,
+  ArrowUpRight,
+  ArrowDownRight,
+  Sprout,
+  Waves,
+  Filter,
+  Database,
+  Wrench,
+  Clock,
+} from "lucide-vue-next";
 import Chart from "chart.js/auto";
 
-export default {
-  name: "WaterRecycling",
-  components: {
-    HeaderPage,
+// Overview cards data
+const overviewData = ref([
+  {
+    icon: Droplet,
+    iconClass: "bg-blue-100 text-blue-600",
+    title: "Total Water Usage",
+    value: "12,450",
+    unit: "Liters",
+    change: "-8",
+    trend: "down",
   },
-  data() {
-    return {
-      usageChart: null,
-      zoneChart: null,
-    };
+  {
+    icon: Recycle,
+    iconClass: "bg-emerald-100 text-emerald-600",
+    title: "Recycled Water",
+    value: "4,320",
+    unit: "Liters",
+    change: "12",
+    trend: "up",
   },
-  mounted() {
-    this.initUsageChart();
-    this.initZoneChart();
+  {
+    icon: Percent,
+    iconClass: "bg-amber-100 text-amber-600",
+    title: "Recycling Rate",
+    value: "34.7",
+    unit: "%",
+    change: "5.2",
+    trend: "up",
   },
-  beforeUnmount() {
-    if (this.usageChart) {
-      this.usageChart.destroy();
-    }
-    if (this.zoneChart) {
-      this.zoneChart.destroy();
-    }
+  {
+    icon: Flower,
+    iconClass: "bg-green-100 text-green-600",
+    title: "Water Savings",
+    value: "1,850",
+    unit: "Liters",
+    change: "15",
+    trend: "up",
   },
-  methods: {
-    initUsageChart() {
-      const ctx = this.$refs.usageChart.getContext("2d");
+]);
 
-      this.usageChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
-          datasets: [
-            {
-              label: "Total Usage (L)",
-              data: [14200, 13800, 13500, 13100, 12800, 12450],
-              backgroundColor: "rgba(54, 162, 235, 0.7)",
-              borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 1,
-            },
-            {
-              label: "Recycled Water (L)",
-              data: [3200, 3450, 3600, 3850, 4100, 4320],
-              backgroundColor: "rgba(75, 192, 192, 0.7)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: "Water Volume (Liters)",
-              },
-            },
-          },
-        },
-      });
-    },
-    initZoneChart() {
-      const ctx = this.$refs.zoneChart.getContext("2d");
-
-      this.zoneChart = new Chart(ctx, {
-        type: "radar",
-        data: {
-          labels: [
-            "Collection Efficiency",
-            "Irrigation Efficiency",
-            "Recycling Rate",
-            "Water Quality",
-            "System Health",
-          ],
-          datasets: [
-            {
-              label: "Zone 1",
-              data: [75, 82, 36, 90, 88],
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgba(255, 99, 132, 1)",
-              pointBackgroundColor: "rgba(255, 99, 132, 1)",
-              pointBorderColor: "#fff",
-              pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "rgba(255, 99, 132, 1)",
-            },
-            {
-              label: "Zone 2",
-              data: [80, 85, 40, 92, 90],
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderColor: "rgba(54, 162, 235, 1)",
-              pointBackgroundColor: "rgba(54, 162, 235, 1)",
-              pointBorderColor: "#fff",
-              pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "rgba(54, 162, 235, 1)",
-            },
-            {
-              label: "Zone 3",
-              data: [65, 75, 29, 88, 82],
-              backgroundColor: "rgba(255, 206, 86, 0.2)",
-              borderColor: "rgba(255, 206, 86, 1)",
-              pointBackgroundColor: "rgba(255, 206, 86, 1)",
-              pointBorderColor: "#fff",
-              pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "rgba(255, 206, 86, 1)",
-            },
-            {
-              label: "Zone 4",
-              data: [70, 78, 29, 85, 80],
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              pointBackgroundColor: "rgba(75, 192, 192, 1)",
-              pointBorderColor: "#fff",
-              pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "rgba(75, 192, 192, 1)",
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            r: {
-              angleLines: {
-                display: true,
-              },
-              suggestedMin: 0,
-              suggestedMax: 100,
-            },
-          },
-        },
-      });
+// Table data
+const zoneData = ref([
+  {
+    zone: "Zone 1 - Vegetables",
+    usage: "3,450",
+    recycled: "1,240",
+    efficiency: "36",
+    status: {
+      label: "Good",
+      variant: "bg-blue-50 text-blue-600 border-blue-200",
     },
   },
+  {
+    zone: "Zone 2 - Fruits",
+    usage: "4,120",
+    recycled: "1,650",
+    efficiency: "40",
+    status: {
+      label: "Excellent",
+      variant: "bg-green-50 text-green-600 border-green-200",
+    },
+  },
+  {
+    zone: "Zone 3 - Herbs",
+    usage: "1,980",
+    recycled: "580",
+    efficiency: "29",
+    status: {
+      label: "Needs Improvement",
+      variant: "bg-orange-50 text-orange-600 border-orange-200",
+    },
+  },
+  {
+    zone: "Zone 4 - Flowers",
+    usage: "2,900",
+    recycled: "850",
+    efficiency: "29",
+    status: {
+      label: "Needs Improvement",
+      variant: "bg-orange-50 text-orange-600 border-orange-200",
+    },
+  },
+]);
+
+// System metrics data
+const systemMetrics = ref({
+  collectionEfficiency: {
+    value: 78,
+    label: "Collection Efficiency",
+  },
+  filtrationQuality: {
+    value: 92,
+    label: "Filtration Quality",
+  },
+  storageCapacity: {
+    value: 45,
+    label: "Storage Capacity",
+  },
+  systemHealth: {
+    value: 85,
+    label: "System Health",
+  },
+});
+
+const systemStages = ref([
+  {
+    name: "Water Source",
+    icon: Droplet,
+    bgColor: "bg-blue-500",
+  },
+  {
+    name: "Irrigation",
+    icon: Sprout,
+    bgColor: "bg-green-500",
+  },
+  {
+    name: "Collection",
+    icon: Waves,
+    bgColor: "bg-purple-500",
+  },
+  {
+    name: "Filtration",
+    icon: Filter,
+    bgColor: "bg-orange-500",
+  },
+  {
+    name: "Storage",
+    icon: Database,
+    bgColor: "bg-yellow-500",
+  },
+]);
+
+// Chart refs and data handling
+const usageChartRef = ref(null);
+const zoneChartRef = ref(null);
+const usageChart = ref(null);
+const zoneChart = ref(null);
+
+// Initialize Water Usage vs Recycling Chart
+const initUsageChart = () => {
+  if (!usageChartRef.value) return;
+  const ctx = usageChartRef.value.getContext("2d");
+  if (!ctx) return;
+
+  usageChart.value = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
+      datasets: [
+        {
+          label: "Total Usage (L)",
+          data: [14200, 13800, 13500, 13100, 12800, 12450],
+          backgroundColor: "rgba(54, 162, 235, 0.7)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+        {
+          label: "Recycled Water (L)",
+          data: [3200, 3450, 3600, 3850, 4100, 4320],
+          backgroundColor: "rgba(75, 192, 192, 0.7)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Water Volume (Liters)",
+          },
+        },
+      },
+    },
+  });
 };
+
+// Initialize Zone Efficiency Chart
+const initZoneChart = () => {
+  if (!zoneChartRef.value) return;
+  const ctx = zoneChartRef.value.getContext("2d");
+  if (!ctx) return;
+
+  zoneChart.value = new Chart(ctx, {
+    type: "radar",
+    data: {
+      labels: [
+        "Collection Efficiency",
+        "Irrigation Efficiency",
+        "Recycling Rate",
+        "Water Quality",
+        "System Health",
+      ],
+      datasets: [
+        {
+          label: "Zone 1",
+          data: [75, 82, 36, 90, 88],
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          pointBackgroundColor: "rgba(255, 99, 132, 1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(255, 99, 132, 1)",
+        },
+        {
+          label: "Zone 2",
+          data: [80, 85, 40, 92, 90],
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          pointBackgroundColor: "rgba(54, 162, 235, 1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(54, 162, 235, 1)",
+        },
+        {
+          label: "Zone 3",
+          data: [65, 75, 29, 88, 82],
+          backgroundColor: "rgba(255, 206, 86, 0.2)",
+          borderColor: "rgba(255, 206, 86, 1)",
+          pointBackgroundColor: "rgba(255, 206, 86, 1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(255, 206, 86, 1)",
+        },
+        {
+          label: "Zone 4",
+          data: [70, 78, 29, 85, 80],
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          pointBackgroundColor: "rgba(75, 192, 192, 1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(75, 192, 192, 1)",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          angleLines: {
+            display: true,
+          },
+          suggestedMin: 0,
+          suggestedMax: 100,
+        },
+      },
+    },
+  });
+};
+
+onMounted(() => {
+  nextTick(() => {
+    initUsageChart();
+    initZoneChart();
+  });
+});
+
+onBeforeUnmount(() => {
+  if (usageChart.value) {
+    usageChart.value.destroy();
+  }
+  if (zoneChart.value) {
+    zoneChart.value.destroy();
+  }
+});
 </script>
 
 <style scoped>
-.water-recycling {
-  padding: 20px;
-}
-
-h1,
-h2 {
-  margin-bottom: 20px;
-}
-
-.overview-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.overview-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  display: flex;
-  align-items: flex-start;
-}
-
-.card-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: rgba(76, 175, 80, 0.1);
-  color: #4caf50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  font-size: 1.5rem;
-}
-
-.card-content {
-  flex: 1;
-}
-
-.card-content h3 {
-  margin: 0 0 5px 0;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.card-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.unit {
-  font-size: 1rem;
-  font-weight: normal;
-  color: #666;
-}
-
-.card-comparison {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.card-comparison i {
-  margin-right: 5px;
-}
-
-.fa-arrow-up {
-  color: #4caf50;
-}
-
-.fa-arrow-down {
-  color: #f44336;
-}
-
-.recycling-system {
-  margin-bottom: 30px;
-}
-
-.system-diagram {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-}
-
-@media (max-width: 992px) {
-  .system-diagram {
-    grid-template-columns: 1fr;
-  }
-}
-
-.diagram-container {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.diagram-node {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 10px;
-  color: white;
-  font-weight: bold;
-  text-align: center;
-}
-
-.diagram-node i {
-  font-size: 2rem;
-  margin-bottom: 5px;
-}
-
-.source {
-  background-color: #3498db;
-}
-
-.irrigation {
-  background-color: #2ecc71;
-}
-
-.collection {
-  background-color: #9b59b6;
-}
-
-.filtration {
-  background-color: #e67e22;
-}
-
-.storage {
-  background-color: #f1c40f;
-}
-
-.diagram-arrow {
-  width: 50px;
-  height: 10px;
-  background-color: #ddd;
-  position: relative;
-  overflow: hidden;
-}
-
-.return-arrow {
-  width: 10px;
-  height: 50px;
-  transform: translateY(-30px);
-}
-
-.flow-indicator {
-  position: absolute;
-  top: 0;
-  left: -20px;
-  width: 20px;
-  height: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 5px,
-    #4caf50 5px,
-    #4caf50 10px
-  );
-  animation: flowAnimation 2s linear infinite;
-}
-
-.return-arrow .flow-indicator {
-  top: -20px;
-  left: 0;
-  width: 100%;
-  height: 20px;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 5px,
-    #4caf50 5px,
-    #4caf50 10px
-  );
-}
-
-@keyframes flowAnimation {
+@keyframes flowRight {
   0% {
-    transform: translateX(0);
+    background-position: 0% 0%;
   }
   100% {
-    transform: translateX(50px);
+    background-position: 100% 0%;
   }
 }
 
-.return-arrow .flow-indicator {
-  animation: flowAnimationVertical 2s linear infinite;
-}
-
-@keyframes flowAnimationVertical {
+@keyframes flowLeft {
   0% {
-    transform: translateY(0);
+    background-position: 100% 0%;
   }
   100% {
-    transform: translateY(50px);
+    background-position: 0% 0%;
   }
 }
 
-.system-stats {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.stat-item h3 {
-  margin: 0 0 10px 0;
-  font-size: 1rem;
-  color: #333;
-}
-
-.progress-bar {
-  height: 10px;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 5px;
-}
-
-.progress {
-  height: 100%;
-  background-color: #4caf50;
-}
-
-.stat-value {
-  text-align: right;
-  font-weight: bold;
-  color: #333;
-}
-
-.efficiency-analytics {
-  margin-bottom: 30px;
-}
-
-.analytics-charts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 992px) {
-  .analytics-charts {
-    grid-template-columns: 1fr;
+@keyframes flowUp {
+  0% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
   }
 }
 
-.chart-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+.animate-flow-right {
+  animation: flowRight 2s linear infinite;
 }
 
-.chart-card h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
+.animate-flow-left {
+  animation: flowLeft 2s linear infinite;
 }
 
-.chart-container {
-  height: 300px;
-}
-
-.efficiency-table {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.efficiency-table h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-th {
-  background-color: #f9f9f9;
-  font-weight: bold;
-  color: #333;
-}
-
-.status {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-}
-
-.status.excellent {
-  background-color: rgba(46, 204, 113, 0.2);
-  color: #2ecc71;
-}
-
-.status.good {
-  background-color: rgba(52, 152, 219, 0.2);
-  color: #3498db;
-}
-
-.status.needs-improvement {
-  background-color: rgba(230, 126, 34, 0.2);
-  color: #e67e22;
-}
-
-.optimization-recommendations {
-  margin-bottom: 30px;
-}
-
-.recommendations-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.recommendation-item {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  display: flex;
-  align-items: flex-start;
-}
-
-.recommendation-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: rgba(76, 175, 80, 0.1);
-  color: #4caf50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  font-size: 1.5rem;
-}
-
-.recommendation-content {
-  flex: 1;
-}
-
-.recommendation-content h3 {
-  margin: 0 0 10px 0;
-  font-size: 1.2rem;
-}
-
-.recommendation-content p {
-  margin: 0 0 15px 0;
-  color: #666;
-  line-height: 1.5;
-}
-
-.recommendation-impact {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-}
-
-.impact-value {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-weight: bold;
-}
-
-.impact-value.positive {
-  background-color: rgba(46, 204, 113, 0.2);
-  color: #2ecc71;
-}
-
-.impact-value.negative {
-  background-color: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
+.animate-flow-up {
+  animation: flowUp 2s linear infinite;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1">
+  <div class="flex-1 w-full space-y-8">
     <HeaderPage
       title="Water Monitoring"
       description="Monitor water usage and quality across your irrigation system"
@@ -360,6 +360,7 @@
 </template>
 
 <script setup>
+import { onMounted, nextTick } from "vue";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -374,5 +375,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const { selectedPeriod, changePeriod } = useWaterUsageChart();
+const { selectedPeriod, initChart, updatePeriod } = useWaterUsageChart();
+
+onMounted(() => {
+  nextTick(() => {
+    const chartElement = document.getElementById("waterUsageTrendsChart");
+    if (chartElement) {
+      initChart(chartElement);
+    }
+  });
+});
+
+const changePeriod = (period) => {
+  updatePeriod(period);
+  nextTick(() => {
+    const chartElement = document.getElementById("waterUsageTrendsChart");
+    if (chartElement) {
+      initChart(chartElement);
+    }
+  });
+};
 </script>
