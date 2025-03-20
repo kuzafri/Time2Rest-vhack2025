@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto max-w-full overflow-x-hidden">
+  <div class="w-full space-y-8 overflow-x-hidden">
     <HeaderPage
       title="Soil Monitoring"
       description="Track soil health and conditions across your land"

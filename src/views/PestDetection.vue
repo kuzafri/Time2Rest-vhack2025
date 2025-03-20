@@ -1,403 +1,244 @@
+<script setup>
+import HeaderPage from "@/components/HeaderPage.vue";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { usePestDetectionChart } from "@/composables/usePestDetectionChart";
+import { Camera, CameraOff, Square } from "lucide-vue-next";
+
+const isStreaming = ref(false);
+const stream = ref(null);
+const videoElement = ref(null);
+const canvasElement = ref(null);
+const historyChartEl = ref(null);
+
+const { createChart } = usePestDetectionChart();
+
+const detectionResults = ref([
+  {
+    image: "https://placehold.co/300x200",
+    issue: "Powdery Mildew",
+    confidence: 92,
+    description:
+      "Powdery mildew detected on cucumber leaves. This fungal disease appears as white powdery spots on the upper sides of leaves.",
+    recommendation:
+      "Apply organic fungicide and improve air circulation around plants. Remove severely affected leaves.",
+    timestamp: "2023-06-15 14:32",
+  },
+  {
+    image: "https://placehold.co/300x200",
+    issue: "Aphid Infestation",
+    confidence: 87,
+    description:
+      "Small clusters of aphids detected on tomato stems. These pests suck plant sap and can transmit viruses.",
+    recommendation:
+      "Spray with insecticidal soap or neem oil. Introduce ladybugs as natural predators.",
+    timestamp: "2023-06-14 09:15",
+  },
+]);
+
+function startCamera() {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((streamData) => {
+        stream.value = streamData;
+        isStreaming.value = true;
+        nextTick(() => {
+          videoElement.value.srcObject = streamData;
+        });
+      })
+      .catch((err) => {
+        console.error("Error accessing camera:", err);
+        alert("Unable to access camera. Please check permissions.");
+      });
+  } else {
+    alert("Your browser does not support camera access");
+  }
+}
+
+function stopCamera() {
+  if (stream.value) {
+    stream.value.getTracks().forEach((track) => track.stop());
+    stream.value = null;
+    isStreaming.value = false;
+  }
+}
+
+function captureImage() {
+  const video = videoElement.value;
+  const canvas = canvasElement.value;
+  const context = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const imageData = canvas.toDataURL("image/png");
+
+  // Simulate AI analysis (in a real app, you'd send this to your AI service)
+  setTimeout(() => {
+    detectionResults.value.unshift({
+      image: imageData,
+      issue: "Leaf Spot Disease",
+      confidence: Math.floor(Math.random() * 20) + 80, // Random confidence between 80-99%
+      description:
+        "Brown spots detected on leaves indicating fungal infection. This can spread to other plants if not treated.",
+      recommendation:
+        "Remove affected leaves, improve air circulation, and apply copper-based fungicide.",
+      timestamp: new Date().toLocaleString(),
+    });
+  }, 1500);
+}
+
+onMounted(() => {
+  nextTick(() => {
+    if (historyChartEl.value) {
+      createChart(historyChartEl.value);
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  stopCamera();
+});
+</script>
+
 <template>
-  <div class="flex-1">
+  <div class="flex-1 w-full space-y-8">
     <HeaderPage
       title="Pest & Disease Detection"
       description="Monitor and identify potential threats to your crops"
     />
-    <div class="pest-detection">
-      <h1>AI-Powered Pest & Disease Detection</h1>
 
-      <div class="camera-section">
-        <div class="camera-feed">
-          <div v-if="!isStreaming" class="camera-placeholder">
-            <i class="fas fa-camera"></i>
-            <p>Camera feed will appear here</p>
-            <button @click="startCamera" class="primary-button">
-              Start Camera
-            </button>
-          </div>
-          <video v-else ref="videoElement" autoplay></video>
-          <canvas ref="canvasElement" style="display: none"></canvas>
-        </div>
-
-        <div class="camera-controls" v-if="isStreaming">
-          <button @click="captureImage" class="primary-button">
-            <i class="fas fa-camera"></i> Capture Image
-          </button>
-          <button @click="stopCamera" class="secondary-button">
-            <i class="fas fa-stop"></i> Stop Camera
-          </button>
-        </div>
-      </div>
-
-      <div class="detection-results" v-if="detectionResults.length > 0">
-        <h2>Detection Results</h2>
-        <div class="results-grid">
+    <!-- Camera Section -->
+    <Card>
+      <CardContent class="p-6">
+        <div class="flex flex-col items-center space-y-4">
           <div
-            v-for="(result, index) in detectionResults"
-            :key="index"
-            class="result-card"
+            class="w-full max-w-2xl h-[480px] bg-muted rounded-lg overflow-hidden relative"
           >
+            <div
+              v-if="!isStreaming"
+              class="h-full flex flex-col items-center justify-center text-muted-foreground"
+            >
+              <i class="fas fa-camera text-6xl mb-4"></i>
+              <p>Camera feed will appear here</p>
+              <Button class="mt-4" variant="default" @click="startCamera">
+                Start Camera
+              </Button>
+            </div>
+            <video
+              v-else
+              ref="videoElement"
+              class="w-full h-full object-cover"
+              autoplay
+            ></video>
+            <canvas ref="canvasElement" class="hidden"></canvas>
+          </div>
+
+          <div v-if="isStreaming" class="flex gap-4">
+            <Button @click="captureImage">
+              <Camera class="mr-2" /> Capture Image
+            </Button>
+            <Button variant="destructive" @click="stopCamera">
+              <CameraOff class="mr-2" /> Stop Camera
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
+    <!-- Detection Results -->
+    <div v-if="detectionResults.length > 0">
+      <h2 class="text-2xl font-semibold mb-4">
+        Detection Results ({{ detectionResults.length }})
+      </h2>
+      <div class="grid grid-cols-1 gap-6">
+        <Card v-for="(result, index) in detectionResults" :key="index">
+          <div class="flex flex-col lg:flex-row">
             <img
               :src="result.image"
               alt="Captured image"
-              class="result-image"
+              class="w-full lg:w-[300px] h-[200px] object-cover rounded-t-md"
             />
-            <div class="result-details">
-              <h3>{{ result.issue }}</h3>
-              <div class="confidence">
-                <span>Confidence: {{ result.confidence }}%</span>
-                <div class="confidence-bar">
-                  <div
-                    class="confidence-level"
-                    :style="{ width: result.confidence + '%' }"
-                  ></div>
+            <Card class="mt-3 bg-muted/50 mx-3 w-full">
+              <CardContent class="p-4">
+                <h4 class="font-semibold mb-2">Recommended Action:</h4>
+                <p class="text-sm text-muted-foreground">
+                  {{ result.recommendation }}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          <div class="flex flex-col justify-between h-full">
+            <CardContent class="flex-1 p-6">
+              <CardTitle class="mb-4">{{ result.issue }}</CardTitle>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm mb-1">
+                  <span>Confidence</span>
+                  <span>{{ result.confidence }}%</span>
                 </div>
+                <Progress :model-value="result.confidence" />
               </div>
-              <p>{{ result.description }}</p>
-              <div class="recommendation">
-                <h4>Recommended Action:</h4>
-                <p>{{ result.recommendation }}</p>
-              </div>
-              <p class="timestamp">Detected on: {{ result.timestamp }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+              <p class="mt-4 text-muted-foreground">
+                {{ result.description }}
+              </p>
 
-      <div class="detection-history">
-        <h2>Detection History</h2>
-        <div class="history-chart">
-          <canvas ref="historyChart"></canvas>
-        </div>
-        <div class="history-stats">
-          <div class="stat-card">
-            <h3>Total Scans</h3>
-            <p>124</p>
+              <p class="mt-4 text-sm text-muted-foreground">
+                Detected on: {{ result.timestamp }}
+              </p>
+            </CardContent>
           </div>
-          <div class="stat-card">
-            <h3>Issues Detected</h3>
-            <p>18</p>
-          </div>
-          <div class="stat-card">
-            <h3>Healthy Scans</h3>
-            <p>106</p>
-          </div>
-          <div class="stat-card">
-            <h3>Detection Rate</h3>
-            <p>14.5%</p>
-          </div>
-        </div>
+        </Card>
       </div>
+    </div>
+
+    <!-- Detection History -->
+    <div>
+      <h2 class="text-2xl font-semibold mb-4">Detection History</h2>
+      <Card>
+        <CardContent class="p-6">
+          <div class="h-auto mb-8">
+            <canvas ref="historyChartEl"></canvas>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card>
+              <CardContent class="p-4 text-center">
+                <h3 class="text-sm font-medium text-muted-foreground mb-2">
+                  Total Scans
+                </h3>
+                <p class="text-3xl font-bold text-primary">124</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent class="p-4 text-center">
+                <h3 class="text-sm font-medium text-muted-foreground mb-2">
+                  Issues Detected
+                </h3>
+                <p class="text-3xl font-bold text-destructive">18</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent class="p-4 text-center">
+                <h3 class="text-sm font-medium text-muted-foreground mb-2">
+                  Healthy Scans
+                </h3>
+                <p class="text-3xl font-bold text-success">106</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent class="p-4 text-center">
+                <h3 class="text-sm font-medium text-muted-foreground mb-2">
+                  Detection Rate
+                </h3>
+                <p class="text-3xl font-bold text-warning">14.5%</p>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>
-
-<script>
-import HeaderPage from "@/components/HeaderPage.vue";
-import Chart from "chart.js/auto";
-
-export default {
-  name: "PestDetection",
-  components: {
-    HeaderPage,
-  },
-  data() {
-    return {
-      isStreaming: false,
-      stream: null,
-      detectionResults: [
-        {
-          image: "https://via.placeholder.com/300x200",
-          issue: "Powdery Mildew",
-          confidence: 92,
-          description:
-            "Powdery mildew detected on cucumber leaves. This fungal disease appears as white powdery spots on the upper sides of leaves.",
-          recommendation:
-            "Apply organic fungicide and improve air circulation around plants. Remove severely affected leaves.",
-          timestamp: "2023-06-15 14:32",
-        },
-        {
-          image: "https://via.placeholder.com/300x200",
-          issue: "Aphid Infestation",
-          confidence: 87,
-          description:
-            "Small clusters of aphids detected on tomato stems. These pests suck plant sap and can transmit viruses.",
-          recommendation:
-            "Spray with insecticidal soap or neem oil. Introduce ladybugs as natural predators.",
-          timestamp: "2023-06-14 09:15",
-        },
-      ],
-      historyChart: null,
-    };
-  },
-  mounted() {
-    this.initHistoryChart();
-  },
-  beforeUnmount() {
-    this.stopCamera();
-    if (this.historyChart) {
-      this.historyChart.destroy();
-    }
-  },
-  methods: {
-    startCamera() {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices
-          .getUserMedia({ video: true })
-          .then((stream) => {
-            this.stream = stream;
-            this.isStreaming = true;
-            this.$nextTick(() => {
-              this.$refs.videoElement.srcObject = stream;
-            });
-          })
-          .catch((err) => {
-            console.error("Error accessing camera:", err);
-            alert("Unable to access camera. Please check permissions.");
-          });
-      } else {
-        alert("Your browser does not support camera access");
-      }
-    },
-    stopCamera() {
-      if (this.stream) {
-        this.stream.getTracks().forEach((track) => track.stop());
-        this.stream = null;
-        this.isStreaming = false;
-      }
-    },
-    captureImage() {
-      const video = this.$refs.videoElement;
-      const canvas = this.$refs.canvasElement;
-      const context = canvas.getContext("2d");
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      const imageData = canvas.toDataURL("image/png");
-
-      // Simulate AI analysis (in a real app, you'd send this to your AI service)
-      setTimeout(() => {
-        this.detectionResults.unshift({
-          image: imageData,
-          issue: "Leaf Spot Disease",
-          confidence: Math.floor(Math.random() * 20) + 80, // Random confidence between 80-99%
-          description:
-            "Brown spots detected on leaves indicating fungal infection. This can spread to other plants if not treated.",
-          recommendation:
-            "Remove affected leaves, improve air circulation, and apply copper-based fungicide.",
-          timestamp: new Date().toLocaleString(),
-        });
-      }, 1500);
-    },
-    initHistoryChart() {
-      const ctx = this.$refs.historyChart.getContext("2d");
-
-      this.historyChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-          datasets: [
-            {
-              label: "Pest Detections",
-              data: [5, 8, 12, 7, 10, 6],
-              borderColor: "#FF6384",
-              backgroundColor: "rgba(255, 99, 132, 0.1)",
-              tension: 0.4,
-            },
-            {
-              label: "Disease Detections",
-              data: [3, 5, 8, 13, 8, 12],
-              borderColor: "#36A2EB",
-              backgroundColor: "rgba(54, 162, 235, 0.1)",
-              tension: 0.4,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: "Detection Trends Over Time",
-            },
-          },
-        },
-      });
-    },
-  },
-};
-</script>
-
-<style scoped>
-.pest-detection {
-  padding: 20px;
-}
-
-.camera-section {
-  margin: 20px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.camera-feed {
-  width: 100%;
-  max-width: 640px;
-  height: 480px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-}
-
-.camera-feed video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.camera-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #666;
-}
-
-.camera-placeholder i {
-  font-size: 4rem;
-  margin-bottom: 15px;
-}
-
-.camera-controls {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-}
-
-.primary-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.secondary-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.detection-results {
-  margin: 30px 0;
-}
-
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.result-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  display: flex;
-}
-
-.result-image {
-  width: 300px;
-  height: 200px;
-  object-fit: cover;
-}
-
-.result-details {
-  padding: 15px;
-  flex: 1;
-}
-
-.confidence {
-  margin: 10px 0;
-}
-
-.confidence-bar {
-  height: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  margin-top: 5px;
-  overflow: hidden;
-}
-
-.confidence-level {
-  height: 100%;
-  background-color: #4caf50;
-}
-
-.recommendation {
-  margin-top: 15px;
-  padding: 10px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
-
-.timestamp {
-  margin-top: 15px;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.detection-history {
-  margin: 30px 0;
-}
-
-.history-chart {
-  margin: 20px 0;
-  height: 300px;
-}
-
-.history-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.stat-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: center;
-}
-
-.stat-card h3 {
-  margin-bottom: 10px;
-  color: #555;
-  font-size: 1rem;
-}
-
-.stat-card p {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #4caf50;
-}
-</style>

@@ -1,1028 +1,743 @@
 <template>
-  <div class="flex-1">
+  <div class="flex-1 w-full space-y-8">
     <HeaderPage
       title="Smart Alerts"
       description="Monitor and manage system notifications and alerts"
     />
-    <div class="smart-alerts">
-      <h1>Smart Alerts & Notifications</h1>
 
-      <div class="alerts-overview">
-        <div class="overview-card">
-          <div class="card-header">
-            <h2>Alert Summary</h2>
-            <div class="time-selector">
-              <button class="time-btn active">Today</button>
-              <button class="time-btn">Week</button>
-              <button class="time-btn">Month</button>
+    <h1 class="text-2xl font-bold">Smart Alerts & Notifications</h1>
+
+    <!-- Alert Summary Section -->
+    <Card>
+      <CardHeader class="flex flex-row items-center justify-between">
+        <div class="flex gap-2">
+          <Button
+            variant="outline"
+            :class="{
+              'bg-emerald-600 text-white hover:bg-emerald-700':
+                activeTimeFilter === 'today',
+            }"
+            @click="setTimeFilter('today')"
+          >
+            Today
+          </Button>
+          <Button
+            variant="outline"
+            :class="{
+              'bg-emerald-600 text-white hover:bg-emerald-700':
+                activeTimeFilter === 'week',
+            }"
+            @click="setTimeFilter('week')"
+          >
+            Week
+          </Button>
+          <Button
+            variant="outline"
+            :class="{
+              'bg-emerald-600 text-white hover:bg-emerald-700':
+                activeTimeFilter === 'month',
+            }"
+            @click="setTimeFilter('month')"
+          >
+            Month
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="flex items-center space-x-4">
+            <div
+              class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center"
+            >
+              <AlertTriangle class="w-6 h-6" />
+            </div>
+            <div>
+              <div class="text-2xl font-bold">{{ summaryData.critical }}</div>
+              <div class="text-sm text-zinc-500">Critical</div>
             </div>
           </div>
-          <div class="alert-summary">
-            <div class="summary-item">
-              <div class="summary-icon critical">
-                <i class="fas fa-exclamation-triangle"></i>
-              </div>
-              <div class="summary-content">
-                <div class="summary-value">2</div>
-                <div class="summary-label">Critical</div>
-              </div>
-            </div>
 
-            <div class="summary-item">
-              <div class="summary-icon warning">
-                <i class="fas fa-exclamation-circle"></i>
-              </div>
-              <div class="summary-content">
-                <div class="summary-value">5</div>
-                <div class="summary-label">Warning</div>
-              </div>
+          <div class="flex items-center space-x-4">
+            <div
+              class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center"
+            >
+              <AlertCircle class="w-6 h-6" />
             </div>
-
-            <div class="summary-item">
-              <div class="summary-icon info">
-                <i class="fas fa-info-circle"></i>
-              </div>
-              <div class="summary-content">
-                <div class="summary-value">12</div>
-                <div class="summary-label">Information</div>
-              </div>
-            </div>
-
-            <div class="summary-item">
-              <div class="summary-icon success">
-                <i class="fas fa-check-circle"></i>
-              </div>
-              <div class="summary-content">
-                <div class="summary-value">8</div>
-                <div class="summary-label">Resolved</div>
-              </div>
+            <div>
+              <div class="text-2xl font-bold">{{ summaryData.warning }}</div>
+              <div class="text-sm text-zinc-500">Warning</div>
             </div>
           </div>
+
+          <div class="flex items-center space-x-4">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"
+            >
+              <Info class="w-6 h-6" />
+            </div>
+            <div>
+              <div class="text-2xl font-bold">{{ summaryData.info }}</div>
+              <div class="text-sm text-zinc-500">Information</div>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <div
+              class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"
+            >
+              <CheckCircle class="w-6 h-6" />
+            </div>
+            <div>
+              <div class="text-2xl font-bold">{{ summaryData.resolved }}</div>
+              <div class="text-sm text-zinc-500">Resolved</div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
+    <!-- Active Alerts Section -->
+    <div>
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+      >
+        <h2 class="text-xl font-semibold">Active Alerts</h2>
+        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <div class="relative flex-1 sm:flex-initial">
+            <Search
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 w-4 h-4"
+            />
+            <Input
+              type="text"
+              placeholder="Search alerts..."
+              class="pl-9 pr-10"
+              v-model="searchQuery"
+            />
+            <button
+              v-if="searchQuery"
+              @click="clearSearch"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+            >
+              <X class="w-4 h-4" />
+            </button>
+          </div>
+
+          <!-- Filter using Select -->
+          <Select :value="selectedTypes" @update:value="updateSelectedTypes">
+            <SelectTrigger class="w-[180px]">
+              <SelectValue>
+                {{ getFilterPlaceholder() }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent @click.stop class="overflow-hidden">
+              <SelectGroup>
+                <SelectLabel class="px-2 mb-2">Alert Types</SelectLabel>
+                <div class="p-2 space-y-2">
+                  <div
+                    v-for="(type, key) in filters"
+                    :key="key"
+                    class="flex items-center space-x-2 px-2 py-1.5 hover:bg-accent rounded-sm cursor-pointer"
+                    @click.stop="toggleFilter(key)"
+                  >
+                    <label
+                      :for="'filter-' + key"
+                      class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    >
+                      {{ getFilterLabel(key) }}
+                    </label>
+                  </div>
+                </div>
+                <SelectSeparator />
+                <div class="p-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    class="w-full"
+                    @click.stop="resetFilters"
+                  >
+                    Reset Filters
+                  </Button>
+                </div>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      <div class="active-alerts">
-        <div class="section-header">
-          <h2>Active Alerts</h2>
-          <div class="filter-controls">
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input type="text" placeholder="Search alerts..." />
+      <div class="space-y-4">
+        <!-- Alert Items -->
+        <Card
+          v-for="alert in filteredAlerts"
+          :key="alert.id"
+          :class="[
+            'border-l-4',
+            {
+              'border-l-red-500': alert.type === 'critical',
+              'border-l-amber-500': alert.type === 'warning',
+              'border-l-blue-500': alert.type === 'info',
+            },
+          ]"
+        >
+          <CardContent class="p-6 flex gap-4">
+            <div
+              :class="[
+                'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
+                {
+                  'bg-red-100 text-red-600': alert.type === 'critical',
+                  'bg-amber-100 text-amber-600': alert.type === 'warning',
+                },
+              ]"
+            >
+              <component :is="alert.icon" class="w-5 h-5" />
             </div>
-            <div class="filter-dropdown">
-              <button class="filter-btn">
-                <i class="fas fa-filter"></i>
-                Filter
-              </button>
+            <div class="flex-1 space-y-3">
+              <div class="flex justify-between items-start">
+                <h3 class="font-semibold">{{ alert.title }}</h3>
+                <span class="text-sm text-zinc-500">{{ alert.time }}</span>
+              </div>
+              <p class="text-sm text-zinc-600">{{ alert.description }}</p>
+              <div class="flex flex-wrap gap-2">
+                <Button
+                  v-for="action in alert.actions"
+                  :key="action.label"
+                  variant="outline"
+                  class="h-8"
+                >
+                  <component :is="action.icon" class="w-4 h-4 mr-2" />
+                  {{ action.label }}
+                </Button>
+              </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <div v-if="filteredAlerts.length === 0" class="text-center py-8">
+          <div
+            class="mx-auto w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center mb-3"
+          >
+            <Search class="w-6 h-6 text-zinc-400" />
           </div>
-        </div>
-
-        <div class="alerts-list">
-          <div class="alert-item critical">
-            <div class="alert-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="alert-content">
-              <div class="alert-header">
-                <h3>Irrigation Pump Failure</h3>
-                <div class="alert-time">15 minutes ago</div>
-              </div>
-              <p class="alert-description">
-                Main irrigation pump (Pump #2) has stopped working. System has
-                switched to backup pump.
-              </p>
-              <div class="alert-actions">
-                <button class="action-btn">
-                  <i class="fas fa-wrench"></i>
-                  Troubleshoot
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-check"></i>
-                  Mark as Resolved
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-bell-slash"></i>
-                  Mute
-                </button>
-              </div>
-            </div>
+          <h3 class="text-lg font-medium text-zinc-900 mb-1">
+            No alerts found
+          </h3>
+          <p class="text-zinc-500">
+            {{ getNoResultsMessage() }}
+          </p>
+          <div class="mt-4">
+            <Button variant="outline" size="sm" @click="resetAll"
+              >Reset All Filters</Button
+            >
           </div>
-
-          <div class="alert-item critical">
-            <div class="alert-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="alert-content">
-              <div class="alert-header">
-                <h3>Extreme Temperature Alert</h3>
-                <div class="alert-time">32 minutes ago</div>
-              </div>
-              <p class="alert-description">
-                Greenhouse temperature has exceeded 35°C. Ventilation system
-                activated at maximum capacity.
-              </p>
-              <div class="alert-actions">
-                <button class="action-btn">
-                  <i class="fas fa-thermometer-half"></i>
-                  View Temperature Log
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-check"></i>
-                  Mark as Resolved
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-bell-slash"></i>
-                  Mute
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="alert-item warning">
-            <div class="alert-icon">
-              <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <div class="alert-content">
-              <div class="alert-header">
-                <h3>Low Soil Moisture</h3>
-                <div class="alert-time">1 hour ago</div>
-              </div>
-              <p class="alert-description">
-                Zone 3 (Herbs) soil moisture has dropped below 25%. Scheduled
-                irrigation will begin in 30 minutes.
-              </p>
-              <div class="alert-actions">
-                <button class="action-btn">
-                  <i class="fas fa-tint"></i>
-                  Irrigate Now
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-check"></i>
-                  Mark as Resolved
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-bell-slash"></i>
-                  Mute
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="alert-item warning">
-            <div class="alert-icon">
-              <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <div class="alert-content">
-              <div class="alert-header">
-                <h3>Water Tank Level Low</h3>
-                <div class="alert-time">3 hours ago</div>
-              </div>
-              <p class="alert-description">
-                Main water storage tank is at 22% capacity. Automatic refill has
-                been initiated.
-              </p>
-              <div class="alert-actions">
-                <button class="action-btn">
-                  <i class="fas fa-eye"></i>
-                  View Tank Status
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-check"></i>
-                  Mark as Resolved
-                </button>
-                <button class="action-btn">
-                  <i class="fas fa-bell-slash"></i>
-                  Mute
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="notification-settings">
-        <h2>Notification Settings</h2>
-
-        <div class="settings-card">
-          <div class="settings-section">
-            <h3>Alert Channels</h3>
-            <div class="channel-options">
-              <div class="channel-option">
-                <div class="option-label">
-                  <i class="fas fa-mobile-alt"></i>
-                  <span>Mobile App Push Notifications</span>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div class="channel-option">
-                <div class="option-label">
-                  <i class="fas fa-envelope"></i>
-                  <span>Email Notifications</span>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div class="channel-option">
-                <div class="option-label">
-                  <i class="fas fa-sms"></i>
-                  <span>SMS Notifications</span>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div class="channel-option">
-                <div class="option-label">
-                  <i class="fas fa-bell"></i>
-                  <span>Web Browser Notifications</span>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div class="settings-section">
-            <h3>Alert Priority Settings</h3>
-            <div class="priority-settings">
-              <div class="priority-option">
-                <div class="priority-label">Critical Alerts</div>
-                <div class="priority-channels">
-                  <div class="channel-tag active">
-                    <i class="fas fa-mobile-alt"></i>
-                  </div>
-                  <div class="channel-tag active">
-                    <i class="fas fa-envelope"></i>
-                  </div>
-                  <div class="channel-tag active">
-                    <i class="fas fa-sms"></i>
-                  </div>
-                  <div class="channel-tag active">
-                    <i class="fas fa-bell"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div class="priority-option">
-                <div class="priority-label">Warning Alerts</div>
-                <div class="priority-channels">
-                  <div class="channel-tag active">
-                    <i class="fas fa-mobile-alt"></i>
-                  </div>
-                  <div class="channel-tag active">
-                    <i class="fas fa-envelope"></i>
-                  </div>
-                  <div class="channel-tag">
-                    <i class="fas fa-sms"></i>
-                  </div>
-                  <div class="channel-tag active">
-                    <i class="fas fa-bell"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div class="priority-option">
-                <div class="priority-label">Information Alerts</div>
-                <div class="priority-channels">
-                  <div class="channel-tag active">
-                    <i class="fas fa-mobile-alt"></i>
-                  </div>
-                  <div class="channel-tag">
-                    <i class="fas fa-envelope"></i>
-                  </div>
-                  <div class="channel-tag">
-                    <i class="fas fa-sms"></i>
-                  </div>
-                  <div class="channel-tag active">
-                    <i class="fas fa-bell"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="settings-section">
-            <h3>Quiet Hours</h3>
-            <div class="quiet-hours-settings">
-              <div class="quiet-hours-toggle">
-                <span>Enable Quiet Hours</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div class="time-range">
-                <div class="time-input">
-                  <label>From</label>
-                  <input type="time" value="22:00" />
-                </div>
-                <div class="time-input">
-                  <label>To</label>
-                  <input type="time" value="06:00" />
-                </div>
-              </div>
-
-              <div class="override-option">
-                <label class="checkbox-container">
-                  <input type="checkbox" checked />
-                  <span class="checkmark"></span>
-                  <span>Allow Critical Alerts During Quiet Hours</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="alert-history">
-        <h2>Alert History</h2>
-
-        <div class="history-chart-container">
-          <canvas ref="historyChart"></canvas>
-        </div>
-
-        <div class="history-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Alert</th>
-                <th>Type</th>
-                <th>Time</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Water Pump Maintenance Required</td>
-                <td><span class="alert-type info">Info</span></td>
-                <td>Today, 08:45</td>
-                <td><span class="alert-status resolved">Resolved</span></td>
-                <td>
-                  <button class="table-action-btn">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>Soil pH Level High in Zone 2</td>
-                <td><span class="alert-type warning">Warning</span></td>
-                <td>Yesterday, 14:22</td>
-                <td><span class="alert-status resolved">Resolved</span></td>
-                <td>
-                  <button class="table-action-btn">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>Power Outage Detected</td>
-                <td><span class="alert-type critical">Critical</span></td>
-                <td>2 days ago, 23:17</td>
-                <td><span class="alert-status resolved">Resolved</span></td>
-                <td>
-                  <button class="table-action-btn">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>Weather Alert: Heavy Rain Expected</td>
-                <td><span class="alert-type warning">Warning</span></td>
-                <td>3 days ago, 16:05</td>
-                <td><span class="alert-status resolved">Resolved</span></td>
-                <td>
-                  <button class="table-action-btn">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
+
+    <!-- Notification Settings Section -->
+    <h2 class="text-2xl font-semibold mb-4">Notification Settings</h2>
+    <Card>
+      <CardHeader class="pt-1" />
+      <CardContent class="space-y-8">
+        <!-- Alert Channels -->
+        <div class="space-y-4">
+          <h3 class="font-semibold">Alert Channels</h3>
+          <div class="space-y-4">
+            <div
+              v-for="channel in notificationChannels"
+              :key="channel.id"
+              class="flex items-center justify-between"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center"
+                >
+                  <component :is="channel.icon" class="w-4 h-4" />
+                </div>
+                <span>{{ channel.label }}</span>
+              </div>
+              <Switch v-model="channel.enabled" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert Priority Settings -->
+        <div class="space-y-4">
+          <h3 class="font-semibold">Alert Priority Settings</h3>
+          <div class="space-y-4">
+            <div
+              v-for="priority in alertPriorities"
+              :key="priority.level"
+              class="flex items-center justify-between"
+            >
+              <span>{{ priority.label }}</span>
+              <div class="flex gap-2">
+                <Button
+                  v-for="channel in priority.channels"
+                  :key="channel.type"
+                  :variant="channel.active ? 'default' : 'outline'"
+                  class="w-8 h-8 p-0"
+                  @click="togglePriorityChannel(priority.level, channel.type)"
+                >
+                  <component :is="channel.icon" class="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiet Hours -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Quiet Hours</h3>
+            <Switch v-model:checked="quietHoursEnabled" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-sm text-zinc-500">From</label>
+              <TimePicker v-model="quietHoursStart" placeholder="Start time" />
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm text-zinc-500">To</label>
+              <TimePicker v-model="quietHoursEnd" placeholder="End time" />
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <Checkbox
+              id="critical-alerts"
+              v-model:checked="allowCriticalDuringQuiet"
+            />
+            <label for="critical-alerts" class="text-sm">
+              Allow Critical Alerts During Quiet Hours
+            </label>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
+    <!-- Alert History Section -->
+    <h2 class="text-2xl font-semibold mb-4">Alert History</h2>
+    <Card>
+      <CardHeader class="pt-1"> </CardHeader>
+      <CardContent>
+        <div class="h-[300px] mb-6">
+          <canvas id="historyChart" ref="chartRef"></canvas>
+        </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead class="w-[300px]">Alert</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead class="w-[50px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="alert in historyAlerts" :key="alert.id">
+              <TableCell class="font-medium">{{ alert.title }}</TableCell>
+              <TableCell>
+                <Badge :variant="alert.typeVariant">{{ alert.type }}</Badge>
+              </TableCell>
+              <TableCell>{{ alert.time }}</TableCell>
+              <TableCell>
+                <Badge variant="outline" :class="alert.statusColor">
+                  {{ alert.status }}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Button variant="ghost" size="icon" class="h-8 w-8 p-0">
+                  <Eye class="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { useAlertHistoryChart } from "@/composables/useAlertHistoryChart";
 import HeaderPage from "@/components/HeaderPage.vue";
-import Chart from "chart.js/auto";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { TimePicker } from "@/components/ui/time-picker";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  CheckCircle,
+  Search,
+  Filter,
+  Wrench,
+  Check,
+  BellOff,
+  Thermometer,
+  Droplet,
+  Eye,
+  Phone,
+  Mail,
+  MessageSquare,
+  Bell,
+  X,
+} from "lucide-vue-next";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectGroup,
+  SelectLabel,
+  SelectValue,
+  SelectSeparator,
+} from "@/components/ui/select";
 
-export default {
-  name: "SmartAlerts",
-  components: {
-    HeaderPage,
-  },
-  data() {
-    return {
-      historyChart: null,
-    };
-  },
-  mounted() {
-    this.initHistoryChart();
-  },
-  beforeUnmount() {
-    if (this.historyChart) {
-      this.historyChart.destroy();
-    }
-  },
-  methods: {
-    initHistoryChart() {
-      const ctx = this.$refs.historyChart.getContext("2d");
+// Reactive state
+const activeTimeFilter = ref("today");
+const searchQuery = ref("");
+const selectedTypes = ref([]);
+const filters = ref({
+  critical: true,
+  warning: true,
+  info: true,
+});
 
-      this.historyChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          datasets: [
-            {
-              label: "Critical",
-              data: [2, 1, 3, 0, 2, 1, 2],
-              backgroundColor: "#e74c3c",
-            },
-            {
-              label: "Warning",
-              data: [5, 4, 3, 6, 2, 3, 5],
-              backgroundColor: "#f39c12",
-            },
-            {
-              label: "Information",
-              data: [8, 10, 6, 9, 12, 7, 12],
-              backgroundColor: "#3498db",
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              stacked: true,
-            },
-            y: {
-              stacked: true,
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    },
+// Use our chart composable
+const { chartRef, initChart, updateChart, cleanupChart } =
+  useAlertHistoryChart();
+
+const quietHoursEnabled = ref(false);
+const quietHoursStart = ref("22:00");
+const quietHoursEnd = ref("06:00");
+const allowCriticalDuringQuiet = ref(true);
+
+// Alert summary data for different time periods
+const summaryDataByPeriod = {
+  today: {
+    critical: 2,
+    warning: 5,
+    info: 12,
+    resolved: 8,
+  },
+  week: {
+    critical: 8,
+    warning: 15,
+    info: 42,
+    resolved: 35,
+  },
+  month: {
+    critical: 24,
+    warning: 58,
+    info: 136,
+    resolved: 112,
   },
 };
+
+// Computed property to get the current summary data based on the active filter
+const summaryData = computed(() => {
+  return summaryDataByPeriod[activeTimeFilter.value];
+});
+
+// Method to set the active time filter
+const setTimeFilter = (filter) => {
+  activeTimeFilter.value = filter;
+};
+
+// Notification channels
+const notificationChannels = ref([
+  { id: 1, label: "Mobile Push Notifications", icon: Phone, enabled: true },
+  { id: 2, label: "Email Notifications", icon: Mail, enabled: true },
+  { id: 3, label: "SMS Notifications", icon: MessageSquare, enabled: false },
+  { id: 4, label: "Web Browser Notifications", icon: Bell, enabled: true },
+]);
+
+// Alert priorities
+const alertPriorities = ref([
+  {
+    level: "critical",
+    label: "Critical Alerts",
+    channels: [
+      { type: "mobile", icon: Phone, active: true },
+      { type: "email", icon: Mail, active: true },
+      { type: "sms", icon: MessageSquare, active: true },
+      { type: "web", icon: Bell, active: true },
+    ],
+  },
+  {
+    level: "warning",
+    label: "Warning Alerts",
+    channels: [
+      { type: "mobile", icon: Phone, active: true },
+      { type: "email", icon: Mail, active: true },
+      { type: "sms", icon: MessageSquare, active: false },
+      { type: "web", icon: Bell, active: true },
+    ],
+  },
+  {
+    level: "info",
+    label: "Information Alerts",
+    channels: [
+      { type: "mobile", icon: Phone, active: true },
+      { type: "email", icon: Mail, active: false },
+      { type: "sms", icon: MessageSquare, active: false },
+      { type: "web", icon: Bell, active: true },
+    ],
+  },
+]);
+
+// Active alerts data
+const activeAlerts = ref([
+  {
+    id: 1,
+    type: "critical",
+    icon: AlertTriangle,
+    title: "Irrigation Pump Failure",
+    time: "15 minutes ago",
+    description:
+      "Main irrigation pump (Pump #2) has stopped working. System has switched to backup pump.",
+    actions: [
+      { label: "Troubleshoot", icon: Wrench },
+      { label: "Mark as Resolved", icon: Check },
+      { label: "Mute", icon: BellOff },
+    ],
+  },
+  {
+    id: 2,
+    type: "critical",
+    icon: AlertTriangle,
+    title: "Extreme Temperature Alert",
+    time: "32 minutes ago",
+    description:
+      "Greenhouse temperature has exceeded 35°C. Ventilation system activated at maximum capacity.",
+    actions: [
+      { label: "View Temperature Log", icon: Thermometer },
+      { label: "Mark as Resolved", icon: Check },
+      { label: "Mute", icon: BellOff },
+    ],
+  },
+  {
+    id: 3,
+    type: "warning",
+    icon: AlertCircle,
+    title: "Low Soil Moisture",
+    time: "1 hour ago",
+    description:
+      "Zone 3 (Herbs) soil moisture has dropped below 25%. Scheduled irrigation will begin in 30 minutes.",
+    actions: [
+      { label: "Irrigate Now", icon: Droplet },
+      { label: "Mark as Resolved", icon: Check },
+      { label: "Mute", icon: BellOff },
+    ],
+  },
+  {
+    id: 4,
+    type: "info",
+    icon: Info,
+    title: "System Update Available",
+    time: "3 hours ago",
+    description:
+      "A new firmware update (v2.3.5) is available for your irrigation controller. Contains security and performance improvements.",
+    actions: [
+      { label: "Update Now", icon: Wrench },
+      { label: "Remind Later", icon: BellOff },
+    ],
+  },
+]);
+
+// History alerts data
+const historyAlerts = ref([
+  {
+    id: 1,
+    title: "Water Pump Maintenance Required",
+    type: "Info",
+    typeVariant: "secondary",
+    time: "Today, 08:45",
+    status: "Resolved",
+    statusColor: "text-emerald-600",
+  },
+  {
+    id: 2,
+    title: "Soil pH Level High in Zone 2",
+    type: "Warning",
+    typeVariant: "warn",
+    time: "Yesterday, 14:22",
+    status: "Resolved",
+    statusColor: "text-emerald-600",
+  },
+  {
+    id: 3,
+    title: "Power Outage Detected",
+    type: "Critical",
+    typeVariant: "destructive",
+    time: "2 days ago, 23:17",
+    status: "Resolved",
+    statusColor: "text-emerald-600",
+  },
+  {
+    id: 4,
+    title: "Temperature Sensor Malfunction",
+    type: "Warning",
+    typeVariant: "warn",
+    time: "3 days ago, 10:05",
+    status: "Pending",
+    statusColor: "text-amber-600",
+  },
+  {
+    id: 5,
+    title: "System Update Installation",
+    type: "Info",
+    typeVariant: "secondary",
+    time: "4 days ago, 02:30",
+    status: "Completed",
+    statusColor: "text-emerald-600",
+  },
+]);
+
+// Computed property for filtered alerts based on search and filter settings
+const filteredAlerts = computed(() => {
+  return activeAlerts.value.filter((alert) => {
+    // Check if the alert type matches any of the enabled filters
+    const typeEnabled =
+      (alert.type === "critical" && filters.value.critical) ||
+      (alert.type === "warning" && filters.value.warning) ||
+      (alert.type === "info" && filters.value.info);
+
+    // If alert type is not enabled in filters, don't show it
+    if (!typeEnabled) return false;
+
+    // If there's a search query, check if alert matches
+    if (searchQuery.value.trim()) {
+      const query = searchQuery.value.toLowerCase();
+      return (
+        alert.title.toLowerCase().includes(query) ||
+        alert.description.toLowerCase().includes(query)
+      );
+    }
+
+    // If no search query and type is enabled, include the alert
+    return true;
+  });
+});
+
+// Reset filters to default values but keep the search query
+const resetFilters = () => {
+  filters.value = {
+    critical: true,
+    warning: true,
+    info: true,
+  };
+};
+
+// Clear search but keep filters
+const clearSearch = () => {
+  searchQuery.value = "";
+};
+
+// Reset everything
+const resetAll = () => {
+  resetFilters();
+  clearSearch();
+};
+
+// Get appropriate message when no alerts match the current filters/search
+const getNoResultsMessage = () => {
+  const noTypeSelected =
+    !filters.value.critical && !filters.value.warning && !filters.value.info;
+
+  if (noTypeSelected) {
+    return "No alert types are selected. Try enabling some alert types in the filter.";
+  }
+
+  if (searchQuery.value.trim()) {
+    return `No alerts match your search "${searchQuery.value}". Try a different search term.`;
+  }
+
+  return "Try adjusting your search or filters.";
+};
+
+// Get placeholder text for filter select
+const getFilterPlaceholder = () => {
+  const selectedTypes = Object.entries(filters.value)
+    .filter(([_, enabled]) => enabled)
+    .map(([type]) => getFilterLabel(type));
+
+  if (selectedTypes.length === 0) return "No types";
+  if (selectedTypes.length === Object.keys(filters.value).length)
+    return "All types";
+
+  // Join selected type names with commas
+  return selectedTypes.join(", ");
+};
+
+// Update selected types in the select component
+const updateSelectedTypes = () => {
+  selectedTypes.value = Object.entries(filters.value)
+    .filter(([_, enabled]) => enabled)
+    .map(([type]) => type);
+};
+
+// Helper function to get proper label for filter types
+const getFilterLabel = (type) => {
+  switch (type) {
+    case "critical":
+      return "Critical";
+    case "warning":
+      return "Warning";
+    case "info":
+      return "Information";
+    default:
+      return type;
+  }
+};
+
+// Toggle individual filter
+const toggleFilter = (type) => {
+  filters.value[type] = !filters.value[type];
+  updateSelectedTypes();
+};
+
+// Watch for changes in selectedTypes and update filters
+watch(
+  selectedTypes,
+  (newTypes) => {
+    // Update each filter based on whether its type is in the selectedTypes array
+    filters.value.critical = newTypes.includes("critical");
+    filters.value.warning = newTypes.includes("warning");
+    filters.value.info = newTypes.includes("info");
+  },
+  { deep: true }
+);
+
+// Update chart when time filter changes
+watch(activeTimeFilter, (newPeriod) => {
+  updateChart(newPeriod);
+});
+
+onMounted(() => {
+  // Initialize chart after a small delay
+  setTimeout(() => {
+    if (chartRef.value) {
+      initChart(chartRef.value, activeTimeFilter.value);
+    }
+  }, 100);
+});
+
+onBeforeUnmount(() => {
+  cleanupChart();
+});
 </script>
-
-<style scoped>
-.smart-alerts {
-  padding: 20px;
-}
-
-h1,
-h2,
-h3 {
-  margin-top: 0;
-}
-
-.alerts-overview {
-  margin-bottom: 30px;
-}
-
-.overview-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.time-selector {
-  display: flex;
-  gap: 10px;
-}
-
-.time-btn {
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  background-color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.time-btn.active {
-  background-color: #4caf50;
-  color: white;
-  border-color: #4caf50;
-}
-
-.alert-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.summary-item {
-  display: flex;
-  align-items: center;
-}
-
-.summary-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  font-size: 1.5rem;
-}
-
-.summary-icon.critical {
-  background-color: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-}
-
-.summary-icon.warning {
-  background-color: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
-}
-
-.summary-icon.info {
-  background-color: rgba(52, 152, 219, 0.1);
-  color: #3498db;
-}
-
-.summary-icon.success {
-  background-color: rgba(46, 204, 113, 0.1);
-  color: #2ecc71;
-}
-
-.summary-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-value {
-  font-size: 1.8rem;
-  font-weight: bold;
-  line-height: 1;
-}
-
-.summary-label {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.active-alerts {
-  margin-bottom: 30px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.filter-controls {
-  display: flex;
-  gap: 10px;
-}
-
-.search-box {
-  position: relative;
-}
-
-.search-box i {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-}
-
-.search-box input {
-  padding: 8px 10px 8px 35px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 250px;
-}
-
-.filter-btn {
-  padding: 8px 15px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-}
-
-.filter-btn i {
-  color: #666;
-}
-
-.alerts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.alert-item {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  display: flex;
-  border-left: 4px solid transparent;
-}
-
-.alert-item.critical {
-  border-left-color: #e74c3c;
-}
-
-.alert-item.warning {
-  border-left-color: #f39c12;
-}
-
-.alert-item.info {
-  border-left-color: #3498db;
-}
-
-.alert-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  font-size: 1.2rem;
-}
-
-.alert-item.critical .alert-icon {
-  background-color: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-}
-
-.alert-item.warning .alert-icon {
-  background-color: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
-}
-
-.alert-item.info .alert-icon {
-  background-color: rgba(52, 152, 219, 0.1);
-  color: #3498db;
-}
-
-.alert-content {
-  flex: 1;
-}
-
-.alert-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.alert-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.alert-time {
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.alert-description {
-  margin: 0 0 15px 0;
-  color: #333;
-}
-
-.alert-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.action-btn {
-  padding: 6px 12px;
-  background-color: #f5f5f5;
-  border: none;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.action-btn i {
-  font-size: 0.8rem;
-}
-
-.notification-settings {
-  margin-bottom: 30px;
-}
-
-.settings-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.settings-section {
-  margin-bottom: 25px;
-}
-
-.settings-section h3 {
-  margin-bottom: 15px;
-  font-size: 1.1rem;
-}
-
-.channel-options {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.channel-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.option-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.option-label i {
-  width: 30px;
-  height: 30px;
-  background-color: #f5f5f5;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #333;
-}
-
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .toggle-slider {
-  background-color: #4caf50;
-}
-
-input:checked + .toggle-slider:before {
-  transform: translateX(26px);
-}
-
-.priority-settings {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.priority-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.priority-channels {
-  display: flex;
-  gap: 10px;
-}
-
-.channel-tag {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f5f5f5;
-  color: #999;
-}
-
-.channel-tag.active {
-  background-color: #4caf50;
-  color: white;
-}
-
-.quiet-hours-settings {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.quiet-hours-toggle {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.time-range {
-  display: flex;
-  gap: 20px;
-}
-
-.time-input {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.time-input label {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.time-input input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding-left: 30px;
-  cursor: pointer;
-}
-
-.checkbox-container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
-
-.checkbox-container:hover input ~ .checkmark {
-  background-color: #eee;
-}
-
-.checkbox-container input:checked ~ .checkmark {
-  background-color: #4caf50;
-}
-
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.checkbox-container .checkmark:after {
-  left: 7px;
-  top: 3px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-.alert-history {
-  margin-bottom: 30px;
-}
-
-.history-chart-container {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  height: 300px;
-  margin-bottom: 20px;
-}
-
-.history-table {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.alert-type,
-.alert-status {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  display: inline-block;
-}
-
-.alert-type.critical {
-  background-color: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-}
-
-.alert-type.warning {
-  background-color: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
-}
-
-.alert-type.info {
-  background-color: rgba(52, 152, 219, 0.1);
-  color: #3498db;
-}
-
-.alert-status.active {
-  background-color: rgba(52, 152, 219, 0.1);
-  color: #3498db;
-}
-
-.alert-status.resolved {
-  background-color: rgba(46, 204, 113, 0.1);
-  color: #2ecc71;
-}
-
-.table-action-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #f5f5f5;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.table-action-btn:hover {
-  background-color: #eee;
-}
-</style>

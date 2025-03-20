@@ -12,6 +12,8 @@ export const badgeVariants = cva(
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         warn: "border-transparent text-xs px-2 py-1 bg-yellow-50 text-yellow-600 rounded-full",
+        completed:
+          "border-transparent text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-full",
         destructive:
           "border-transparent text-xs px-2 py-1 bg-red-50 text-red-600 rounded-full",
         outline: "text-foreground",
