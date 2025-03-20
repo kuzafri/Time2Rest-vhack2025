@@ -134,7 +134,7 @@ const getPriceChartConfig = (data) => ({
     ],
     datasets: [
       {
-        label: "Historical Price ($/Ton)",
+        label: "Historical Price (RM/Ton)",
         data: data.prices.historical,
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.1)",
@@ -142,7 +142,7 @@ const getPriceChartConfig = (data) => ({
         fill: true,
       },
       {
-        label: "Predicted Price ($/Ton)",
+        label: "Predicted Price (RM/Ton)",
         data: data.prices.predicted,
         borderColor: "rgba(54, 162, 235, 1)",
         backgroundColor: "rgba(54, 162, 235, 0.1)",
@@ -165,7 +165,7 @@ const getPriceChartConfig = (data) => ({
       y: {
         title: {
           display: true,
-          text: "Price ($/Ton)",
+          text: "Price (RM/Ton)",
         },
       },
     },

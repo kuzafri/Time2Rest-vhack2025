@@ -215,7 +215,7 @@ onBeforeUnmount(() => {
             <CardContent class="p-6">
               <div class="space-y-2">
                 <div class="text-3xl font-bold">
-                  ${{ currentMetrics.revenue.toLocaleString() }}
+                  RM{{ currentMetrics.revenue.toLocaleString() }}
                 </div>
                 <div class="text-sm text-muted-foreground">
                   Est. Revenue/Hectare

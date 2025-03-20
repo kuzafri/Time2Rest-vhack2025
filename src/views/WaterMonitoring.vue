@@ -343,7 +343,7 @@
             <div>
               <div class="flex justify-between text-sm mb-1">
                 <span class="font-medium">Cost Reduction</span>
-                <span>$85.20</span>
+                <span>RM85.20</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div
