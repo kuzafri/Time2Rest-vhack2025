@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, onMounted, onBeforeUnmount, nextTick, watch } from "vue";
 import { useYieldForecasting } from "@/composables/useYieldForecasting";
+import { useRoute } from "vue-router";
 import {
   Sun,
   Sprout,
@@ -24,6 +25,7 @@ const crops = [
   { id: 5, name: "Lettuce" },
 ];
 
+const route = useRoute();
 const selectedCrop = ref(1);
 const yieldChartEl = ref(null);
 const priceChartEl = ref(null);
@@ -164,9 +166,24 @@ onMounted(() => {
       initYieldChart(yieldChartEl.value);
       initPriceChart(priceChartEl.value);
       chartsInitialized.value = true;
+      
+      // Check for crop ID in query params
+      if (route.query.crop) {
+        const cropId = parseInt(route.query.crop);
+        if (cropId && cropMetrics[cropId]) {
+          selectCrop(cropId);
+        }
+      }
     }
   });
 });
+
+// Watch for changes in route query parameters
+watch(() => route.query.crop, (newCropId) => {
+  if (newCropId && cropMetrics[newCropId]) {
+    selectCrop(parseInt(newCropId));
+  }
+}, { immediate: true });
 
 // Clean up when component is unmounted
 onBeforeUnmount(() => {
@@ -192,7 +209,6 @@ onBeforeUnmount(() => {
               >AI Confidence: 87%</span
             >
             <Progress :model-value="87" class="w-[150px]" />
-            <!-- Fix Progress value syntax -->
           </div>
         </div>
       </CardHeader>

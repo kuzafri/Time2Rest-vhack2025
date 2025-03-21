@@ -10,6 +10,7 @@ import CropYieldForecasting from '../views/CropYieldForecasting.vue'
 import MobileAppIntegration from '../views/MobileAppIntegration.vue'
 import WaterRecycling from '../views/WaterRecycling.vue'
 import SmartAlerts from '../views/SmartAlerts.vue'
+import CropsManagement from '../views/CropsManagement.vue'
 
 const routes = [
   {
@@ -66,6 +67,11 @@ const routes = [
     path: '/smart-alerts',
     name: 'SmartAlerts',
     component: SmartAlerts
+  },
+  {
+    path: '/crops-management',
+    name: 'CropsManagement',
+    component: CropsManagement
   }
 ]
 
@@ -74,4 +80,4 @@ const router = createRouter({
   routes
 })
 
-export default router 
+export default router
