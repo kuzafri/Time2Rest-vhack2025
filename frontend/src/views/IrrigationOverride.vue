@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Pause, Play, RotateCcw, Square } from "lucide-vue-next";
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { format } from "date-fns";
+import axios from "axios";
 
 interface Zone {
   id: number;
@@ -35,6 +36,16 @@ interface IrrigationHistoryEntry {
   duration: number; // in minutes
   waterUsage: number; // in liters
   status: "completed" | "interrupted" | "error";
+}
+
+interface SensorData {
+  _id: string;
+  soil_moisture: number;
+  rain_value: number;
+  is_raining: boolean;
+  soil_pump: boolean;
+  arduino_timestamp: number;
+  BSON_UTC: string;
 }
 
 const selectedZoneFilter = ref<string>("all");
@@ -131,6 +142,10 @@ const irrigationHistory = ref<IrrigationHistoryEntry[]>([
   }
 ]);
 
+const sensorData = ref<SensorData | null>(null);
+const isLoading = ref(true);
+const error = ref<string | null>(null);
+
 const formatDate = (date: Date) => {
   return format(date, "MMM dd, yyyy");
 };
@@ -177,6 +192,42 @@ const getZoneStatusText = (status: Zone["status"]) => {
       return "Paused";
   }
 };
+
+const fetchSensorData = async () => {
+  try {
+    isLoading.value = true;
+    const response = await axios.get('http://localhost:5000/sensor_data?limit=1');
+    if (response.data && response.data.length > 0) {
+      sensorData.value = response.data[0];
+    }
+    isLoading.value = false;
+  } catch (err) {
+    console.error('Error fetching sensor data:', err);
+    error.value = 'Failed to load sensor data';
+    isLoading.value = false;
+  }
+};
+
+const controlPump = async (state: boolean) => {
+  try {
+    await axios.post('http://localhost:5000/control_pump', { state });
+    await fetchSensorData(); // Refresh data after control action
+  } catch (err) {
+    console.error('Error controlling pump:', err);
+    error.value = 'Failed to control pump';
+  }
+};
+
+onMounted(() => {
+  fetchSensorData();
+  // Set up polling to refresh data every 30 seconds
+  const interval = setInterval(fetchSensorData, 30000);
+  
+  // Clean up interval on component unmount
+  onUnmounted(() => {
+    clearInterval(interval);
+  });
+});
 </script>
 
 <template>
@@ -206,6 +257,77 @@ const getZoneStatusText = (status: Zone["status"]) => {
           <div class="mt-4 flex space-x-2">
             <Button variant="destructive">Emergency Stop</Button>
             <Button variant="secondary">Switch to Manual</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card v-if="sensorData">
+        <CardHeader>
+          <CardTitle class="text-sm font-medium text-gray-500">Current Sensor Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span>Soil Moisture:</span>
+              <span class="font-medium">{{ sensorData.soil_moisture }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Rain Value:</span>
+              <span class="font-medium">{{ sensorData.rain_value }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Is Raining:</span>
+              <Badge :variant="sensorData.is_raining ? 'default' : 'secondary'">
+                {{ sensorData.is_raining ? 'Yes' : 'No' }}
+              </Badge>
+            </div>
+            <div class="flex justify-between">
+              <span>Pump Status:</span>
+              <Badge :variant="sensorData.soil_pump ? 'default' : 'secondary'">
+                {{ sensorData.soil_pump ? 'Active' : 'Inactive' }}
+              </Badge>
+            </div>
+            <div class="flex justify-between">
+              <span>Last Updated:</span>
+              <span class="font-medium">{{ new Date(sensorData.BSON_UTC).toLocaleString() }}</span>
+            </div>
+          </div>
+          <div class="mt-4 flex space-x-2">
+            <Button 
+              variant="success" 
+              class="flex-1" 
+              :disabled="sensorData.soil_pump"
+              @click="controlPump(true)"
+            >
+              Turn Pump On
+            </Button>
+            <Button 
+              variant="destructive" 
+              class="flex-1" 
+              :disabled="!sensorData.soil_pump"
+              @click="controlPump(false)"
+            >
+              Turn Pump Off
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <Card v-else>
+        <CardHeader>
+          <CardTitle class="text-sm font-medium text-gray-500">Current Sensor Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div v-if="isLoading" class="flex justify-center items-center h-40">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+          <div v-else-if="error" class="text-center text-red-500 h-40 flex items-center justify-center">
+            <div>
+              <p>{{ error }}</p>
+              <Button variant="outline" class="mt-2" @click="fetchSensorData">Retry</Button>
+            </div>
+          </div>
+          <div v-else class="text-center text-gray-500 h-40 flex items-center justify-center">
+            No sensor data available
           </div>
         </CardContent>
       </Card>

@@ -209,6 +209,19 @@ def get_moisture_predictions():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route("/control_pump", methods=["POST"])
+def control_pump():
+    try:
+        data = request.json
+        pump_state = data.get("state", False)
+        
+        # Publish pump control command
+        publish_pump_control(pump_state)
+        
+        return jsonify({"message": f"Pump control set to {pump_state}"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     # Start MQTT client in a separate thread
     mqtt_thread = Thread(target=start_mqtt_client, daemon=True)
