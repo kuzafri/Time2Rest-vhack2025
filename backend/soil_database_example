@@ -1,0 +1,14 @@
+{
+    "BSON UTC":{
+        "$date":{"$numberLong":"1736931398571"}},
+        "is_raining":false,
+        "soil_pump":false,
+        "_id":{"$oid":"67877846999fb016d90f3635"},
+        "rain_value":{"$numberInt":"2827"},
+        "soil_moisture":{"$numberInt":"2079"},
+        "arduino_timestamp":{"$numberInt":"184503"}
+}
+
+
+
+

@@ -114,14 +114,11 @@ import ZoneCard from "../components/ZoneCard.vue";
 import { useSoilHistory } from "@/composables/useSoilHistory";
 import { useSoilMetrics } from "@/composables/useSoilMetrics";
 
-// Import OpenLayers
+// Import OpenLayers with more explicit paths
 import "ol/ol.css";
-import Map from "ol/Map";
-import View from "ol/View";
-import TileLayer from "ol/layer/Tile";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import XYZ from "ol/source/XYZ"; // For satellite imagery
+import { Map, View } from "ol";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Vector as VectorSource, XYZ } from "ol/source";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
