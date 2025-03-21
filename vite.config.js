@@ -16,4 +16,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ["ol/source/XYZ", "ol/source/OSM", "ol/layer/Tile"],
+    exclude: [],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/ol/, /node_modules/],
+    },
+  },
 });
