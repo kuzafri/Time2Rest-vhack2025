@@ -26,6 +26,7 @@ import {
   Bell,
   Users,
   Settings,
+  Wheat,
 } from "lucide-vue-next";
 import LeaveLet from "./icons/LeaveLet.vue";
 
@@ -67,6 +68,7 @@ const navigation = {
     { title: "Smart Alerts", icon: Bell, url: "/smart-alerts" },
   ],
   management: [
+    { title: "Crops", icon: Wheat, url: "/crops-management" },
     { title: "Team", icon: Users, url: "/team" },
     { title: "Settings", icon: Settings, url: "/settings" },
   ],
