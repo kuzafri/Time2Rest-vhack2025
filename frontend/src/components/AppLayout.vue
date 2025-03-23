@@ -73,6 +73,13 @@
               <span class="ml-3">Settings</span>
             </li>
           </ul>
+          <div class="px-4 py-2 mt-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Mobile App</div>
+          <ul>
+            <li class="px-4 py-2 flex items-center text-gray-600 hover:bg-gray-50 rounded-lg mx-2 transition-colors cursor-pointer">
+              <i class="fas fa-users text-gray-400 w-5"></i>
+              <span class="ml-3">Download App</span>
+            </li>
+          </ul>
         </nav>
       </div>
 

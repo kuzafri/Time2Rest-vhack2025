@@ -27,6 +27,7 @@ import {
   Users,
   Settings,
   Wheat,
+  Download,
 } from "lucide-vue-next";
 import LeaveLet from "./icons/LeaveLet.vue";
 
@@ -59,11 +60,11 @@ const navigation = {
       icon: TrendingUp,
       url: "/crop-yield-forecasting",
     },
-    {
-      title: "Mobile App Integration",
-      icon: Smartphone,
-      url: "/mobile-app-integration",
-    },
+    // {
+    //   title: "Mobile App Integration",
+    //   icon: Smartphone,
+    //   url: "/mobile-app-integration",
+    // },
     { title: "Water Recycling", icon: Recycle, url: "/water-recycling" },
     { title: "Smart Alerts", icon: Bell, url: "/smart-alerts" },
   ],
@@ -71,6 +72,9 @@ const navigation = {
     { title: "Crops", icon: Wheat, url: "/crops-management" },
     { title: "Team", icon: Users, url: "/team" },
     { title: "Settings", icon: Settings, url: "/settings" },
+  ],
+  mobile: [
+    { title: "Download App", icon: Download, url: "/mobile-app-integration" }
   ],
 };
 </script>
@@ -113,6 +117,25 @@ const navigation = {
             <SidebarMenuSub>
               <SidebarMenuSubItem
                 v-for="item in navigation.management"
+                :key="item.title"
+              >
+                <SidebarMenuSubButton as-child>
+                  <router-link :to="item.url" class="flex items-center gap-2">
+                    <component :is="item.icon" class="h-4 w-4" />
+                    <span>{{ item.title }}</span>
+                  </router-link>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            </SidebarMenuSub>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton class="uppercase">
+              Mobile App
+            </SidebarMenuButton>
+            <SidebarMenuSub>
+              <SidebarMenuSubItem
+                v-for="item in navigation.mobile"
                 :key="item.title"
               >
                 <SidebarMenuSubButton as-child>
