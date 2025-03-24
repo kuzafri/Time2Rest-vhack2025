@@ -16,10 +16,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['axios']
+  },
   build: {
-    outDir: 'dist',
-    rollupOptions: {
-      external: ['axios']
-    }
+    outDir: 'dist'
   }
 });
