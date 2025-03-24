@@ -2,6 +2,7 @@
   base = "frontend/"
   publish = "dist/"
   command = "npm run build"
+  environment = { NODE_VERSION = "16" }
 
 # Redirect API requests to your backend (if you're using Netlify Functions)
 [[redirects]]
