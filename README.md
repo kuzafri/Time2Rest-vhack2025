@@ -1,54 +1,59 @@
-# LeaveLet
+# 🌿 LeaveLet
 
-## Description
-This project consists of a frontend and backend application. The backend handles sensor data, while the frontend provides the user interface.
+---
 
-## Prerequisites
-Make sure you have the following installed:
-- [Node.js](https://nodejs.org/) (v16 or later recommended)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+## 🚀 Overview
+LeaveLet is a full-stack application designed to seamlessly manage sensor data through a robust backend while providing an intuitive and interactive frontend for users.
 
-## Installation
+---
 
-### Clone the repository
+## 📌 Prerequisites
+Ensure you have the following installed before proceeding:
+
+✅ [Node.js](https://nodejs.org/) (Recommended: v16 or later)  
+✅ [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)  
+✅ [Python](https://www.python.org/) (For backend services)
+
+---
+
+## 📥 Installation
+
+### 1️⃣ Clone the Repository
 ```sh
 git clone <repository-url>
 cd <project-folder>
 ```
 
-### Install dependencies
+### 2️⃣ Install Dependencies
 ```sh
 npm install
 ```
 
-## Running the Application
+---
 
-### Running the Frontend
-Navigate to the frontend folder:
+## 🚀 Running the Application
+
+### ▶️ Start the Frontend
+📍 Navigate to the frontend folder and start the development server:
 ```sh
 cd frontend
-```
-Start the frontend development server:
-```sh
 npm run dev
 ```
 
-### Running the Backend
-Navigate to the backend folder:
+### ▶️ Start the Backend
+📍 Navigate to the backend folder and run the backend services:
 ```sh
 cd backend
-```
-Start the backend server:
-```sh
 python start_services.py
 ```
 
-## Folder Structure
-```
-├── backend/        # Backend application
-├── frontend/       # Frontend application
-├── netlify.toml    # Netlify configuration file
-├── package.json    # Project dependencies
-```
+---
 
-
+## 📂 Project Structure
+```
+📦 project-folder
+├── 📂 backend/        # Backend application
+├── 📂 frontend/       # Frontend application
+├── 📄 netlify.toml    # Netlify configuration file
+├── 📄 package.json    # Project dependencies
+```
