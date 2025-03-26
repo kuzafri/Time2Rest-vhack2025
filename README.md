@@ -40,7 +40,7 @@ cd backend
 ```
 Start the backend server:
 ```sh
-npm start
+python start_services.py
 ```
 
 ## Folder Structure
