@@ -6,7 +6,6 @@ This project consists of a frontend and backend application. The backend handles
 ## Prerequisites
 Make sure you have the following installed:
 - [Node.js](https://nodejs.org/) (v16 or later recommended)
-- [Netlify CLI](https://docs.netlify.com/cli/get-started/)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 ## Installation
