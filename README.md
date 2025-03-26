@@ -5,6 +5,8 @@
 ## 🚀 Overview
 LeaveLet is a full-stack application designed to seamlessly manage sensor data through a robust backend while providing an intuitive and interactive frontend for users.
 
+🌐 **Live Preview:** [LeaveLet Web App](https://leavelet.netlify.app/)
+
 ---
 
 ## 📌 Prerequisites
@@ -57,3 +59,4 @@ python start_services.py
 ├── 📄 netlify.toml    # Netlify configuration file
 ├── 📄 package.json    # Project dependencies
 ```
+
